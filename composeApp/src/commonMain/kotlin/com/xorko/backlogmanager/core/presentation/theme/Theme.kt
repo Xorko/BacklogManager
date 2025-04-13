@@ -25,7 +25,7 @@ fun BacklogManagerTheme(
     MaterialTheme(
         colorScheme = DarkColorScheme,
         typography = AppTypography,
-        shapes = AppShapes,
+        shapes = BacklogManagerShapes,
         content = content
     )
 }
