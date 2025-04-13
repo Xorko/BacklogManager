@@ -11,7 +11,7 @@ androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.7.3"
+compose-multiplatform = "1.8.0-beta02"
 junit = "4.13.2"
 kotlin = "2.1.20"
 serialization = "1.8.1"
@@ -25,8 +25,11 @@ coil = "3.1.0"
 arrow = "2.0.1"
 room = "2.7.0"
 sqlite = "2.5.0"
+spotless = "7.0.3"
+ktlint-ruleset-compose = "0.4.22"
 
 [libraries]
+ktlint-ruleset-compose = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-ruleset-compose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
@@ -79,6 +82,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 room = { id = "androidx.room", version.ref = "room" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 [bundles]
 ktor-client = [
