@@ -1,4 +1,4 @@
-package com.xorko.backlogmanager.ui.theme
+package com.xorko.backlogmanager.core.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
