@@ -5,27 +5,28 @@ import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.ColorImage
-import coil3.annotation.ExperimentalCoilApi
-import coil3.compose.AsyncImagePreviewHandler
-import coil3.compose.LocalAsyncImagePreviewHandler
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.theme.Background
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
-import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.BackloggedGame
 import com.xorko.backlogmanager.game.domain.Developer
 import com.xorko.backlogmanager.game.domain.Game
 import com.xorko.backlogmanager.game.domain.Publisher
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameListItem
+import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListScreen
+import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListState
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.random.Random
 
 @Preview
 @Composable
@@ -51,63 +52,74 @@ private fun SearchBarPreview() {
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Preview
 @Composable
-private fun BackloggedGameListItemPreview() {
-    val game =
-        Game(
-            id = 1L,
-            name = "Caves of Qud",
-            description = """
-                Caves of Qud is a science fantasy roguelike epic steeped in retrofuturism,
-                deep simulation, and swathes of sentient plants.
-            """.trimIndent(),
-            released = LocalDate(year = 2015, monthNumber = 7, dayOfMonth = 15),
-            coverUrl = "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/333640/header.jpg?t=1744126759",
-            developers = listOf(Developer(id = 1L, name = "Freehold Games")),
-            publishers = listOf(Publisher(id = 1L, name = "Kitfox Games")),
-            rating = 4,
-            ratingsCount = 437,
-        )
-    val toPlayBackloggedGame =
-        BackloggedGame.ToPlay(
-            game = game,
-            backloggedDate = LocalDateTime(2024, 5, 4, 0, 0, 0, 0),
-        )
-    val nowPlayingBackloggedGame =
-        BackloggedGame.NowPlaying(
-            game = game,
-            backloggedDate = LocalDateTime(2024, 5, 4, 0, 0, 0, 0),
-            startedDate = LocalDateTime(2024, 5, 5, 0, 0, 0, 0),
-        )
-    val finishedBackloggedGame =
-        BackloggedGame.Finished(
-            game = game,
-            backloggedDate = LocalDateTime(2024, 5, 4, 0, 0, 0, 0),
-            startedDate = LocalDateTime(2024, 5, 5, 0, 0, 0, 0),
-            finishedDate = LocalDateTime(2024, 5, 6, 0, 0, 0, 0),
-        )
-    val coilPreviewHandler = AsyncImagePreviewHandler {
-        ColorImage(Color.Red.toArgb(), 300, 350)
+fun BackloggedGameListPreview() {
+    BacklogManagerTheme {
+        BackloggedGameListScreen(
+            state =
+                BackloggedGameListState(
+                    searchResults = backloggedGameList,
+                ),
+        ) { }
     }
+}
 
-    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides coilPreviewHandler) {
-        Column(verticalArrangement = spacedBy(Dimens.spacingMedium)) {
-            BacklogManagerTheme {
-                BackloggedGameListItem(
-                    backloggedGame = toPlayBackloggedGame,
-                    onClick = {},
+val backloggedGameList =
+    (1..100).map {
+        val backloggedDate = randomDateTimeBetween()
+        val startedDate =
+            randomDateTimeBetween(
+                start = backloggedDate.toInstant(TimeZone.currentSystemDefault()),
+            )
+        val finishedDate =
+            randomDateTimeBetween(
+                start = startedDate.toInstant(TimeZone.currentSystemDefault()),
+            )
+
+        when (it % 3) {
+            0 ->
+                BackloggedGame.ToPlay(
+                    game = generateGame(it),
+                    backloggedDate = randomDateTimeBetween(),
                 )
-                BackloggedGameListItem(
-                    backloggedGame = nowPlayingBackloggedGame,
-                    onClick = {},
+            1 ->
+                BackloggedGame.NowPlaying(
+                    game = generateGame(it),
+                    backloggedDate = backloggedDate,
+                    startedDate = startedDate,
                 )
-                BackloggedGameListItem(
-                    backloggedGame = finishedBackloggedGame,
-                    onClick = {},
+            else ->
+                BackloggedGame.Finished(
+                    game = generateGame(it),
+                    backloggedDate = backloggedDate,
+                    startedDate = startedDate,
+                    finishedDate = finishedDate,
                 )
-            }
         }
     }
+
+private fun generateGame(index: Int) =
+    Game(
+        id = index.toLong(),
+        name = "Game $index",
+        description = "Description $index",
+        released = LocalDate(year = 2015, monthNumber = 7, dayOfMonth = 15),
+        developers = listOf(Developer(id = index.toLong(), name = "Developer $index")),
+        publishers = listOf(Publisher(id = index.toLong(), name = "Publisher $index")),
+        coverUrl = "https://picsum.photos/200/300",
+        rating = Random.nextInt(until = 6),
+        ratingsCount = Random.nextInt(),
+    )
+
+fun randomDateTimeBetween(
+    start: Instant =
+        Clock.System
+            .now()
+            .minus(value = 5, unit = DateTimeUnit.YEAR, timeZone = TimeZone.currentSystemDefault()),
+    end: Instant = Clock.System.now(), // Default: now
+    timeZone: TimeZone = TimeZone.currentSystemDefault(),
+): LocalDateTime {
+    val randomEpochMillis = Random.nextLong(start.toEpochMilliseconds(), end.toEpochMilliseconds())
+    return Instant.fromEpochMilliseconds(randomEpochMillis).toLocalDateTime(timeZone)
 }

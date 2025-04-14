@@ -2,9 +2,14 @@
 <resources>
     <string name="search_hint">Search...</string>
     <string name="clear_search">Clear search</string>
+    <string name="no_search_results">No luck this time. Maybe try another title?</string>
+    <string name="no_filter_result_to_play">Nothing in your backlog? Let’s fix that</string>
+    <string name="no_filter_result_now_playing">You’ve got a whole backlog waiting. Pick one and dive in!</string>
+    <string name="no_filter_result_finished">Nothing finished… yet. Why not pick one and see it through?</string>
     <string name="backlogged_game_status_to_play">To play</string>
     <string name="backlogged_game_status_now_playing">Now playing</string>
     <string name="backlogged_game_status_finished">Finished</string>
+    <string name="backlogged_game_status_all">All</string>
     <string name="backlogged_game_added_on">Added on %1$s</string>
     <string name="backlogged_game_started_on">Started on %1$s</string>
     <string name="backlogged_game_finished_on">Finished on %1$s</string>

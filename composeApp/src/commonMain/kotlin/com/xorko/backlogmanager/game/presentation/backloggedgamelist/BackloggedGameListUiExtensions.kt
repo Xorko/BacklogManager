@@ -4,6 +4,7 @@ import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.backlogged_game_added_on
 import backlogmanager.composeapp.generated.resources.backlogged_game_finished_on
 import backlogmanager.composeapp.generated.resources.backlogged_game_started_on
+import backlogmanager.composeapp.generated.resources.backlogged_game_status_all
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_finished
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_now_playing
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_to_play
@@ -13,12 +14,22 @@ import com.xorko.backlogmanager.game.domain.BackloggedGame.Finished
 import com.xorko.backlogmanager.game.domain.BackloggedGame.NowPlaying
 import com.xorko.backlogmanager.game.domain.BackloggedGame.ToPlay
 import kotlinx.datetime.LocalDateTime
+import kotlin.reflect.KClass
 
 fun BackloggedGame.getStatus(): UiText =
     when (this) {
         is ToPlay -> UiText.StringResourceId(Res.string.backlogged_game_status_to_play)
         is NowPlaying -> UiText.StringResourceId(Res.string.backlogged_game_status_now_playing)
         is Finished -> UiText.StringResourceId(Res.string.backlogged_game_status_finished)
+    }
+
+fun KClass<out BackloggedGame>?.getStatus(): UiText =
+    when (this) {
+        null -> UiText.StringResourceId(Res.string.backlogged_game_status_all)
+        ToPlay::class -> UiText.StringResourceId(Res.string.backlogged_game_status_to_play)
+        NowPlaying::class -> UiText.StringResourceId(Res.string.backlogged_game_status_now_playing)
+        Finished::class -> UiText.StringResourceId(Res.string.backlogged_game_status_finished)
+        else -> error("Unknown BackloggedGame type: $this")
     }
 
 fun BackloggedGame.getLongStatus(): UiText =

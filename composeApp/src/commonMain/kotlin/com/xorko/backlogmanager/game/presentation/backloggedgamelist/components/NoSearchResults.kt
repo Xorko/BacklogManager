@@ -1,0 +1,18 @@
+package com.xorko.backlogmanager.game.presentation.backloggedgamelist.components
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.style.TextAlign
+import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.no_search_results
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun NoSearchResults() {
+    Text(
+        text = stringResource(Res.string.no_search_results),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.headlineSmall,
+    )
+}

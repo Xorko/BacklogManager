@@ -1,6 +1,7 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist
 
 import com.xorko.backlogmanager.game.domain.BackloggedGame
+import kotlin.reflect.KClass
 
 sealed interface BackloggedGameListActions {
     data class OnSearchQueryChange(
@@ -12,6 +13,6 @@ sealed interface BackloggedGameListActions {
     ) : BackloggedGameListActions
 
     data class OnFilterSelected(
-        val index: Int,
+        val index: KClass<out BackloggedGame>?,
     ) : BackloggedGameListActions
 }
