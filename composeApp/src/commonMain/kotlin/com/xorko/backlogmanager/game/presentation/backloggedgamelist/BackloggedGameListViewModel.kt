@@ -16,7 +16,7 @@ class BackloggedGameListViewModel : ViewModel() {
 
             is BackloggedGameListActions.OnFilterSelected -> {
                 _state.update {
-                    it.copy(selectedFilterIndex = action.index)
+                    it.copy(selectedFilter = action.index)
                 }
             }
 
