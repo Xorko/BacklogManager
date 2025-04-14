@@ -13,11 +13,13 @@ class BackloggedGameListViewModel : ViewModel() {
         when (action) {
             is BackloggedGameListActions.OnBackloggedGameClicked -> {
             }
+
             is BackloggedGameListActions.OnFilterSelected -> {
                 _state.update {
                     it.copy(selectedFilterIndex = action.index)
                 }
             }
+
             is BackloggedGameListActions.OnSearchQueryChange -> {
                 _state.update {
                     it.copy(searchQuery = action.query)
