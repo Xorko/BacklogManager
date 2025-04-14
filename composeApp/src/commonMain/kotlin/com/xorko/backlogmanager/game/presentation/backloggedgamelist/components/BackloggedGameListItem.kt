@@ -123,7 +123,7 @@ private fun GameInfo(
             )
             Text(
                 text = backloggedGame.formatDevelopersAndPublishers(),
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
             )
             StatusChip(
@@ -134,7 +134,7 @@ private fun GameInfo(
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = backloggedGame.getLongStatus().asString(),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
         )
     }
