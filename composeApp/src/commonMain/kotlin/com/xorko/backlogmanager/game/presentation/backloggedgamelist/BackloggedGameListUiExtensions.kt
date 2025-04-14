@@ -28,22 +28,28 @@ fun BackloggedGame.getLongStatus(): UiText =
         is Finished -> getLongStatus()
     }
 
+fun BackloggedGame.formatDevelopersAndPublishers(): String = "${formatDeveloperList()} / ${formatPublisherList()}"
+
+fun BackloggedGame.formatPublisherList(): String = game.publishers.joinToString { it.name }
+
+fun BackloggedGame.formatDeveloperList(): String = game.developers.joinToString { it.name }
+
 private fun ToPlay.getLongStatus(): UiText =
     UiText.StringResourceId(
         Res.string.backlogged_game_added_on,
-        arrayOf(backloggedDate.toLongDateFormat())
+        arrayOf(backloggedDate.toLongDateFormat()),
     )
 
 private fun NowPlaying.getLongStatus(): UiText =
     UiText.StringResourceId(
         Res.string.backlogged_game_started_on,
-        arrayOf(backloggedDate.toLongDateFormat())
+        arrayOf(backloggedDate.toLongDateFormat()),
     )
 
 private fun Finished.getLongStatus(): UiText =
     UiText.StringResourceId(
         Res.string.backlogged_game_finished_on,
-        arrayOf(backloggedDate.toLongDateFormat())
+        arrayOf(backloggedDate.toLongDateFormat()),
     )
 
 expect fun LocalDateTime.toLongDateFormat(): String

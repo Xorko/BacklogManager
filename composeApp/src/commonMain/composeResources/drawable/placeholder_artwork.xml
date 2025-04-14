@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="300dp"
+    android:viewportWidth="200"
+    android:viewportHeight="300">
+
+    <!-- Background rectangle -->
+    <path
+        android:fillColor="#1E1E1E"
+        android:pathData="M0,0h200v300h-200z" />
+
+    <!-- Gamepad Icon (stylized simple shape) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"
+        android:pathData="M60,140c-15,10 -20,30 -10,50c10,20 30,25 50,10c20,15 40,10 50,-10c10,-20 5,-40 -10,-50c-15,-10 -65,-10 -80,0zM85,165h10v10h-10zM105,165h10v10h-10z" />
+
+    <!-- Text or symbol for feedback -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.1"
+        android:pathData="M80,250h40v5h-40zM90,260h20v5h-20z" />
+
+</vector>
