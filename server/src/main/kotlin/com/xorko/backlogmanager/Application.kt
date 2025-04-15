@@ -1,5 +1,6 @@
 package com.xorko.backlogmanager
 
+import com.xorko.backlogmanager.igdb.igdbProxyRoute
 import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -15,7 +16,8 @@ fun main() {
 fun Application.module() {
     routing {
         get("/") {
-            call.respondText("Ktor: ${Greeting().greet()}")
+            call.respondText("Server is up and running!")
         }
+        igdbProxyRoute()
     }
 }
