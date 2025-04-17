@@ -7,8 +7,8 @@ val dev = "dev"
 val staging = "staging"
 val prod = "prod"
 val environments = setOf(dev, staging, prod)
-val android = "android"
-val ios = "ios"
+val androidPlatformName = "android"
+val iosPlatformName = "ios"
 val apiBaseUrlKey = "API_BASE_URL"
 
 plugins {
@@ -175,11 +175,11 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, dev)
     }
     targetConfigs(dev) {
-        create(android) {
+        create(androidPlatformName) {
             buildConfigField(STRING, apiBaseUrlKey, "http://10.0.2.2")
         }
-        create(ios) {
-            buildConfigField(STRING, apiBaseUrlKey, "http://localhost") // TODO: Check if this is the correct URL
+        create(iosPlatformName) {
+            buildConfigField(STRING, apiBaseUrlKey, "http://127.0.0.1")
         }
     }
 
@@ -187,10 +187,10 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, staging)
     }
     targetConfigs(staging) {
-        create(android) {
+        create(androidPlatformName) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
-        create(ios) {
+        create(iosPlatformName) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
     }
@@ -199,10 +199,10 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, prod)
     }
     targetConfigs(prod) {
-        create(android) {
+        create(androidPlatformName) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
-        create(ios) {
+        create(iosPlatformName) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
     }
@@ -210,11 +210,12 @@ buildkonfig {
 
 fun Project.getAndroidBuildVariantOrNull(): String? {
     val taskRequestsStr = gradle.startParameter.taskRequests.toString()
-    val pattern: Pattern = if (taskRequestsStr.contains("assemble")) {
-        Pattern.compile("assemble(\\w+)(Release|Debug)")
-    } else {
-        Pattern.compile("bundle(\\w+)(Release|Debug)")
-    }
+    val pattern: Pattern =
+        if (taskRequestsStr.contains("assemble")) {
+            Pattern.compile("assemble(\\w+)(Release|Debug)")
+        } else {
+            Pattern.compile("bundle(\\w+)(Release|Debug)")
+        }
 
     val matcher = pattern.matcher(taskRequestsStr)
     val variant = if (matcher.find()) matcher.group(1).lowercase() else null
@@ -225,9 +226,9 @@ fun Project.getAndroidBuildVariantOrNull(): String? {
     }
 }
 
-private fun Project.currentBuildVariant(): String {
-    return getAndroidBuildVariantOrNull()
-        ?: System.getenv()["VARIANT"]
+private fun Project.currentBuildVariant(): String =
+    getAndroidBuildVariantOrNull()
+        ?: System
+            .getenv()["VARIANT"]
             .toString()
             .takeIf { it in environments } ?: dev
-}
