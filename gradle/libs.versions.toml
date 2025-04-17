@@ -27,6 +27,7 @@ room = "2.7.0"
 sqlite = "2.5.0"
 spotless = "7.0.3"
 ktlint-ruleset-compose = "0.4.22"
+buildkonfig = "0.17.0"
 
 [libraries]
 ktlint-ruleset-compose = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-ruleset-compose" }
@@ -84,6 +85,7 @@ room = { id = "androidx.room", version.ref = "room" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 
 [bundles]
 ktor-client = [
