@@ -49,7 +49,12 @@ kotlin {
 
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.androidx.core.ktx)
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.material)
+            implementation(libs.androidx.constraintlayout)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.kotlinx.coroutines.android)
         }
