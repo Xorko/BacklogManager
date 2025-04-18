@@ -15,4 +15,12 @@ class DefaultGameRepository(
             println("games: $games")
             games.map { it.toGame() }
         }
+
+    override suspend fun getGames(): Either<DataError.Remote, List<Game>> =
+        remoteGameDataSource.getGames().map { games ->
+            println("games: $games")
+            games.map { it.toGame() }
+        }
+
+    override suspend fun getGameById(id: Long): Either<DataError.Remote, Game?> = remoteGameDataSource.getGameById(id).map { it?.toGame() }
 }

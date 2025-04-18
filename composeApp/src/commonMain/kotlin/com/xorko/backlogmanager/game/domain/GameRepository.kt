@@ -6,4 +6,8 @@ import com.xorko.backlogmanager.game.domain.models.Game
 
 interface GameRepository {
     suspend fun searchGames(query: String): Either<DataError.Remote, List<Game>>
+
+    suspend fun getGames(): Either<DataError.Remote, List<Game>>
+
+    suspend fun getGameById(id: Long): Either<DataError.Remote, Game?>
 }

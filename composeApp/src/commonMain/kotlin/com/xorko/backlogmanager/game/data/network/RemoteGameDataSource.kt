@@ -9,4 +9,11 @@ interface RemoteGameDataSource {
         query: String,
         resultLimit: Int? = null,
     ): Either<DataError.Remote, List<GameDto>>
+
+    suspend fun getGames(
+        resultLimit: Int? = null,
+        resultOffset: Int? = null,
+    ): Either<DataError.Remote, List<GameDto>>
+
+    suspend fun getGameById(id: Long): Either<DataError.Remote, GameDto?>
 }

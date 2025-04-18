@@ -8,8 +8,6 @@ import com.xorko.backlogmanager.game.data.dto.GameDto
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 
 const val IGDB_ROUTE = "/igdb/v4"
 
@@ -24,12 +22,39 @@ class KtorRemoteGameDataSource(
             httpClient.post(
                 urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
             ) {
-                contentType(ContentType.Text.Plain)
                 setBody(
                     IgdbQueryFactory.searchGames(
                         query = query,
                         limit = resultLimit,
                     ),
+                )
+            }
+        }
+
+    override suspend fun getGames(
+        resultLimit: Int?,
+        resultOffset: Int?,
+    ): Either<DataError.Remote, List<GameDto>> =
+        safeCall {
+            httpClient.post(
+                urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
+            ) {
+                setBody(
+                    IgdbQueryFactory.getGames(
+                        limit = resultLimit,
+                        offset = resultOffset,
+                    ),
+                )
+            }
+        }
+
+    override suspend fun getGameById(id: Long): Either<DataError.Remote, GameDto?> =
+        safeCall {
+            httpClient.post(
+                urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
+            ) {
+                setBody(
+                    IgdbQueryFactory.getGameById(id),
                 )
             }
         }
