@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
+    <string name="error_unknown">Something went wrong, but we’re not sure what</string>
+    <string name="error_request_timeout">The request timed out</string>
+    <string name="error_no_internet">Looks like you’re not connected to the internet</string>
+    <string name="error_disk_full">Looks like your storage is full</string>
+    <string name="error_too_many_request">Looks like you exceeded your quota</string>
+    <string name="error_serialization">Couldn't parse data</string>
     <string name="search_hint">Search...</string>
     <string name="clear_search">Clear search</string>
     <string name="no_search_results">No luck this time. Maybe try another title?</string>
