@@ -114,6 +114,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     flavorDimensions(flavorDimension)
     productFlavors {
         create(dev) {
