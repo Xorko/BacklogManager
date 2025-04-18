@@ -1,0 +1,50 @@
+package com.xorko.backlogmanager.game.presentation.gamelist.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.xorko.backlogmanager.core.presentation.conditional
+import com.xorko.backlogmanager.core.presentation.theme.Dimens
+import com.xorko.backlogmanager.game.domain.models.Game
+
+@Composable
+fun GameList(
+    games: List<Game>,
+    onGameClicked: (Game) -> Unit,
+    modifier: Modifier = Modifier,
+    scrollState: LazyListState = rememberLazyListState(),
+) {
+    LazyColumn(
+        modifier = modifier,
+        state = scrollState,
+        verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        itemsIndexed(
+            items = games,
+            key = { _, game -> game.id },
+        ) { index, game ->
+            GameListItem(
+                game = game,
+                onClick = { onGameClicked(game) },
+                modifier =
+                    Modifier
+                        .widthIn(max = 700.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.paddingMedium)
+                        .conditional(index == 0) {
+                            padding(top = Dimens.paddingMedium)
+                        },
+            )
+        }
+    }
+}
