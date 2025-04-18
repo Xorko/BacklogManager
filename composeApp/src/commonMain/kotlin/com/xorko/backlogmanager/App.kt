@@ -1,14 +1,13 @@
 package com.xorko.backlogmanager
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListScreenRoot
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListViewModel
+import com.xorko.backlogmanager.game.presentation.gamelist.GameListScreenRoot
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
@@ -21,8 +20,8 @@ fun App() {
     }
 
     BacklogManagerTheme {
-        BackloggedGameListScreenRoot(
-            viewModel = remember { BackloggedGameListViewModel() },
+        GameListScreenRoot(
+            viewModel = koinViewModel(),
             onGameClick = {},
         )
     }
