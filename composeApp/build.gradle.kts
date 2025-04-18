@@ -7,8 +7,8 @@ val dev = "dev"
 val staging = "staging"
 val prod = "prod"
 val environments = setOf(dev, staging, prod)
-val androidPlatformName = "android"
-val iosPlatformName = "ios"
+val androidTarget = "android"
+val iosTargets = listOf("iosX64", "iosArm64", "iosSimulatorArm64")
 val apiBaseUrlKey = "API_BASE_URL"
 
 plugins {
@@ -169,17 +169,20 @@ buildkonfig {
 
     defaultConfigs {
         buildConfigField(STRING, flavorDimension, "none")
+        buildConfigField(STRING, apiBaseUrlKey, "")
     }
 
     defaultConfigs(dev) {
         buildConfigField(STRING, flavorDimension, dev)
     }
     targetConfigs(dev) {
-        create(androidPlatformName) {
+        create(androidTarget) {
             buildConfigField(STRING, apiBaseUrlKey, "http://10.0.2.2")
         }
-        create(iosPlatformName) {
-            buildConfigField(STRING, apiBaseUrlKey, "http://127.0.0.1")
+        iosTargets.forEach {
+            create(it) {
+                buildConfigField(STRING, apiBaseUrlKey, "http://127.0.0.1")
+            }
         }
     }
 
@@ -187,11 +190,13 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, staging)
     }
     targetConfigs(staging) {
-        create(androidPlatformName) {
+        create(androidTarget) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
-        create(iosPlatformName) {
-            buildConfigField(STRING, apiBaseUrlKey, "")
+        iosTargets.forEach {
+            create(it) {
+                buildConfigField(STRING, apiBaseUrlKey, "")
+            }
         }
     }
 
@@ -199,11 +204,13 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, prod)
     }
     targetConfigs(prod) {
-        create(androidPlatformName) {
+        create(androidTarget) {
             buildConfigField(STRING, apiBaseUrlKey, "")
         }
-        create(iosPlatformName) {
-            buildConfigField(STRING, apiBaseUrlKey, "")
+        iosTargets.forEach {
+            create(it) {
+                buildConfigField(STRING, apiBaseUrlKey, "")
+            }
         }
     }
 }
