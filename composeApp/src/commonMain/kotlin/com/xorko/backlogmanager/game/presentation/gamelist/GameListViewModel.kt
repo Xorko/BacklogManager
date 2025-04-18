@@ -2,6 +2,7 @@ package com.xorko.backlogmanager.game.presentation.gamelist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.core.presentation.toUiText
 import com.xorko.backlogmanager.game.domain.GameRepository
 import com.xorko.backlogmanager.game.domain.models.Game
@@ -20,6 +21,10 @@ import kotlinx.coroutines.launch
 class GameListViewModel(
     private val gameRepository: GameRepository,
 ) : ViewModel() {
+    private companion object {
+        private const val GAMES_PER_PAGE = 20
+    }
+
     private val _state = MutableStateFlow(GameListState())
     val state = _state.asStateFlow()
 
@@ -29,6 +34,7 @@ class GameListViewModel(
     init {
         observeSearchQuery()
         fetchGames()
+        Logger.d("GameListViewModel initialized", tag = this::class.simpleName)
     }
 
     fun onAction(action: GameListActions) {
@@ -40,6 +46,7 @@ class GameListViewModel(
                 _state.update {
                     it.copy(searchQuery = action.query)
                 }
+                Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
             }
         }
     }
@@ -51,19 +58,23 @@ class GameListViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
-                when {
-                    query.isBlank() -> {
-                        _state.update {
-                            it.copy(
-                                errorMessage = null,
-                                searchResults = cachedGames,
-                            )
+                {
+                    Logger.d("New query: $query", tag = this::class.simpleName)
+                    when {
+                        query.isBlank() -> {
+                            _state.update {
+                                it.copy(
+                                    errorMessage = null,
+                                    searchResults = cachedGames,
+                                )
+                            }
+                            Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
                         }
-                    }
 
-                    query.length >= 2 -> {
-                        searchJob?.cancel()
-                        searchJob = searchGames(query)
+                        query.length >= 2 -> {
+                            searchJob?.cancel().also { Logger.d("Cancelling search job", tag = this::class.simpleName) }
+                            searchJob = searchGames(query)
+                        }
                     }
                 }
             }.launchIn(viewModelScope)
@@ -72,18 +83,22 @@ class GameListViewModel(
     private fun searchGames(query: String) =
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
+            Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
             gameRepository
                 .searchGames(query)
                 .fold(
                     ifLeft = { error ->
+                        Logger.e("Error searching games: $error", tag = this::class.simpleName)
                         _state.update {
                             it.copy(
                                 isLoading = false,
                                 errorMessage = error.toUiText(),
                             )
                         }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
                     },
                     ifRight = { searchResults ->
+                        Logger.v("Search results: $searchResults", tag = this::class.simpleName)
                         _state.update {
                             it.copy(
                                 isLoading = false,
@@ -91,6 +106,7 @@ class GameListViewModel(
                                 errorMessage = null,
                             )
                         }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
                     },
                 )
         }
@@ -102,14 +118,17 @@ class GameListViewModel(
                 .getGames()
                 .fold(
                     ifLeft = { error ->
+                        Logger.e("Error fetching games: $error", tag = this::class.simpleName)
                         _state.update {
                             it.copy(
                                 isLoading = false,
                                 errorMessage = error.toUiText(),
                             )
                         }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
                     },
                     ifRight = { games ->
+                        Logger.v("Fetched games: $games", tag = this::class.simpleName)
                         cachedGames = games
                         _state.update {
                             it.copy(
@@ -118,6 +137,7 @@ class GameListViewModel(
                                 errorMessage = null,
                             )
                         }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
                     },
                 )
         }

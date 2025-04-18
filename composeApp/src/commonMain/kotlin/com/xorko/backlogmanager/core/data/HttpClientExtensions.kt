@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import com.xorko.backlogmanager.core.domain.DataError
+import com.xorko.backlogmanager.core.domain.logging.Logger
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.SocketTimeoutException
@@ -22,6 +23,7 @@ suspend inline fun <reified T> safeCall(execute: () -> HttpResponse): Either<Dat
             return DataError.Remote.NO_INTERNET.left()
         } catch (_: Exception) {
             coroutineContext.ensureActive() // Avoids CancellationException to be catch
+            Logger.e("An unknown error occurred during the request")
             return DataError.Remote.UNKNOWN.left()
         }
 
@@ -32,21 +34,27 @@ suspend inline fun <reified T> responseToEither(response: HttpResponse): Either<
     when (response.status.value) {
         in 200..299 -> {
             try {
-                println("TTT - ${response.body<String>()}")
                 response.body<T>().right()
             } catch (e: NoTransformationFoundException) {
-                println(e.cause)
-                println(e.message)
+                Logger.e("Error parsing response: ${e.message}", throwable = e)
                 DataError.Remote.SERIALIZATION.left()
             }
         }
 
-        408 -> DataError.Remote.REQUEST_TIMEOUT.left()
-        429 -> DataError.Remote.TOO_MANY_REQUEST.left()
+        408 -> {
+            Logger.e("Request timed out")
+            DataError.Remote.REQUEST_TIMEOUT.left()
+        }
+        429 -> {
+            Logger.w("Too many requests sent to server in a short period")
+            DataError.Remote.TOO_MANY_REQUEST.left()
+        }
         in 500..599 -> {
-            println("Server error: ${response.status.value}")
-            println(response.body<String>())
+            Logger.e("Server error: ${response.status.value}")
             DataError.Remote.SERVER.left()
         }
-        else -> DataError.Remote.UNKNOWN.left()
+        else -> {
+            Logger.e("An unknown error occurred during the request")
+            DataError.Remote.UNKNOWN.left()
+        }
     }

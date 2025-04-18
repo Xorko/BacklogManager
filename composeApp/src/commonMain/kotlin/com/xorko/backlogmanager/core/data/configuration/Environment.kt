@@ -1,6 +1,7 @@
 package com.xorko.backlogmanager.core.data.configuration
 
 import com.xorko.backlogmanager.BuildKonfig
+import com.xorko.backlogmanager.core.domain.logging.Logger
 
 enum class Environment {
     DEV,
@@ -21,4 +22,7 @@ val currentEnvironment: Environment =
         "staging" -> Environment.STAGING
         "prod" -> Environment.PRODUCTION
         else -> error("Unknown environment: ${BuildKonfig.env}")
+    }.also {
+        Logger.i("Current environment: $it", tag = Environment::class.simpleName)
+        Logger.i("Current build type: ${currentBuildType.name}", tag = BuildType::class.simpleName)
     }

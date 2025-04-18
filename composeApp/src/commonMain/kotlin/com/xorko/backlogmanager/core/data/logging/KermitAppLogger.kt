@@ -16,7 +16,7 @@ object KermitAppLogger : AppLogger {
                     minSeverity = Severity.Verbose,
                     logWriterList = listOf(platformLogWriter()),
                 ),
-        ).withTag(APP_TAG)
+        )
 
     override fun e(
         message: String,

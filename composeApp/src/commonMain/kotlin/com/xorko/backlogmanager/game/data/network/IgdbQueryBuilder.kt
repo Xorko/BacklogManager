@@ -1,5 +1,7 @@
 package com.xorko.backlogmanager.game.data.network
 
+import com.xorko.backlogmanager.core.domain.logging.Logger
+
 class IgdbQueryBuilder {
     private var search: String? = null
     private val fields = mutableListOf<String>()
@@ -48,7 +50,9 @@ class IgdbQueryBuilder {
         limit?.let { parts.add("limit $it") }
         offset?.let { parts.add("offset $it") }
 
-        return parts.joinToString(";\n", postfix = ";")
+        return parts.joinToString(";\n", postfix = ";").also {
+            Logger.d("IGDB Query built: $it", tag = this::class.simpleName)
+        }
     }
 }
 

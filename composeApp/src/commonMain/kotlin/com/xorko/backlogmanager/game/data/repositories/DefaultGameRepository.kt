@@ -2,6 +2,7 @@ package com.xorko.backlogmanager.game.data.repositories
 
 import arrow.core.Either
 import com.xorko.backlogmanager.core.domain.DataError
+import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.game.data.mappers.toGame
 import com.xorko.backlogmanager.game.data.network.RemoteGameDataSource
 import com.xorko.backlogmanager.game.domain.GameRepository
@@ -12,13 +13,13 @@ class DefaultGameRepository(
 ) : GameRepository {
     override suspend fun searchGames(query: String): Either<DataError.Remote, List<Game>> =
         remoteGameDataSource.searchGames(query).map { games ->
-            println("games: $games")
+            Logger.v("games: $games", tag = this::class.simpleName)
             games.map { it.toGame() }
         }
 
     override suspend fun getGames(): Either<DataError.Remote, List<Game>> =
         remoteGameDataSource.getGames().map { games ->
-            println("games: $games")
+            Logger.v("games: $games", tag = this::class.simpleName)
             games.map { it.toGame() }
         }
 

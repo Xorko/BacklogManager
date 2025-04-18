@@ -14,6 +14,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import com.xorko.backlogmanager.core.domain.logging.Logger as AppLogger
 
 object HttpClientFactory {
     fun create(engine: HttpClientEngine) =
@@ -38,6 +39,7 @@ object HttpClientFactory {
             }
 
             if (currentBuildType.isDebug()) {
+                AppLogger.i("Debug mode enabled. Enabling Ktor logging…", tag = this::class.simpleName)
                 install(Logging) {
                     logger = Logger.DEFAULT
                     level = LogLevel.ALL
