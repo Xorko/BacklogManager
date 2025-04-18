@@ -28,6 +28,7 @@ class GameListViewModel(
 
     init {
         observeSearchQuery()
+        fetchGames()
     }
 
     fun onAction(action: GameListActions) {
@@ -87,6 +88,33 @@ class GameListViewModel(
                             it.copy(
                                 isLoading = false,
                                 searchResults = searchResults,
+                                errorMessage = null,
+                            )
+                        }
+                    },
+                )
+        }
+
+    private fun fetchGames() =
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            gameRepository
+                .getGames()
+                .fold(
+                    ifLeft = { error ->
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = error.toUiText(),
+                            )
+                        }
+                    },
+                    ifRight = { games ->
+                        cachedGames = games
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                searchResults = games,
                                 errorMessage = null,
                             )
                         }
