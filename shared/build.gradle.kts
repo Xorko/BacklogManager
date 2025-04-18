@@ -23,7 +23,13 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            implementation(libs.bundles.koin)
+            implementation(libs.bundles.ktor.client)
+            implementation(libs.bundles.coil)
+            implementation(libs.bundles.arrow)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json)
+            implementation(libs.kotlinx.datetime)
         }
     }
 }

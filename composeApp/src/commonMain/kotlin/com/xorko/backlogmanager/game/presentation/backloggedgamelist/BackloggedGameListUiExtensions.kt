@@ -9,10 +9,11 @@ import backlogmanager.composeapp.generated.resources.backlogged_game_status_fini
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_now_playing
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_to_play
 import com.xorko.backlogmanager.core.presentation.UiText
-import com.xorko.backlogmanager.game.domain.BackloggedGame
-import com.xorko.backlogmanager.game.domain.BackloggedGame.Finished
-import com.xorko.backlogmanager.game.domain.BackloggedGame.NowPlaying
-import com.xorko.backlogmanager.game.domain.BackloggedGame.ToPlay
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
+import com.xorko.backlogmanager.game.domain.models.Game
 import kotlinx.datetime.LocalDateTime
 import kotlin.reflect.KClass
 
@@ -39,11 +40,11 @@ fun BackloggedGame.getLongStatus(): UiText =
         is Finished -> getLongStatus()
     }
 
-fun BackloggedGame.formatDevelopersAndPublishers(): String = "${formatDeveloperList()} / ${formatPublisherList()}"
+fun Game.formatDevelopersAndPublishers(): String = "${formatDeveloperList()} / ${formatPublisherList()}"
 
-fun BackloggedGame.formatPublisherList(): String = game.publishers.joinToString { it.name }
+fun Game.formatPublisherList(): String = publishers.joinToString { it.name }
 
-fun BackloggedGame.formatDeveloperList(): String = game.developers.joinToString { it.name }
+fun Game.formatDeveloperList(): String = developers.joinToString { it.name }
 
 private fun ToPlay.getLongStatus(): UiText =
     UiText.StringResourceId(

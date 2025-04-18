@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.conditional
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
-import com.xorko.backlogmanager.game.domain.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 
 @Composable
 fun BackloggedGameList(

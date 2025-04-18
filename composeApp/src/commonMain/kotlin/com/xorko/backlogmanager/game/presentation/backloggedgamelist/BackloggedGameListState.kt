@@ -1,10 +1,11 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist
 
 import com.xorko.backlogmanager.core.presentation.UiText
-import com.xorko.backlogmanager.game.domain.BackloggedGame
-import com.xorko.backlogmanager.game.domain.Developer
-import com.xorko.backlogmanager.game.domain.Game
-import com.xorko.backlogmanager.game.domain.Publisher
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.Developer
+import com.xorko.backlogmanager.game.domain.models.Game
+import com.xorko.backlogmanager.game.domain.models.OnlineRating
+import com.xorko.backlogmanager.game.domain.models.Publisher
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -41,17 +42,20 @@ val backloggedGameList =
         when (it % 3) {
             0 ->
                 BackloggedGame.ToPlay(
+                    id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = randomDateTimeBetween(),
                 )
             1 ->
                 BackloggedGame.NowPlaying(
+                    id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
                 )
             else ->
                 BackloggedGame.Finished(
+                    id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
@@ -69,8 +73,18 @@ private fun generateGame(index: Int) =
         developers = listOf(Developer(id = index.toLong(), name = "Developer $index")),
         publishers = listOf(Publisher(id = index.toLong(), name = "Publisher $index")),
         coverUrl = "https://picsum.photos/200/300",
-        rating = Random.nextInt(until = 6),
-        ratingsCount = Random.nextInt(),
+        criticsRating =
+            OnlineRating(
+                value = Random.nextDouble(until = 5.0),
+                count = Random.nextInt(until = 6),
+            ),
+        usersRating =
+            OnlineRating(
+                value = Random.nextDouble(until = 5.0),
+                count = Random.nextInt(until = 6),
+            ),
+        platforms = emptyList(),
+        artworksUrls = emptyList(),
     )
 
 fun randomDateTimeBetween(

@@ -15,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
-import com.xorko.backlogmanager.game.domain.BackloggedGame
-import com.xorko.backlogmanager.game.domain.BackloggedGame.Finished
-import com.xorko.backlogmanager.game.domain.BackloggedGame.NowPlaying
-import com.xorko.backlogmanager.game.domain.BackloggedGame.ToPlay
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import kotlin.reflect.KClass
 

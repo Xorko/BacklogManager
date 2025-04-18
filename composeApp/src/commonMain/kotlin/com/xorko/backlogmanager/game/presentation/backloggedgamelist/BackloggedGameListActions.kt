@@ -1,6 +1,6 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist
 
-import com.xorko.backlogmanager.game.domain.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import kotlin.reflect.KClass
 
 sealed interface BackloggedGameListActions {

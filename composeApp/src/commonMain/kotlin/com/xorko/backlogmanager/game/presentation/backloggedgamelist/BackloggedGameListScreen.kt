@@ -25,11 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
-import com.xorko.backlogmanager.game.domain.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameFilterChips
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameList
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.ErrorMessage
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.NoSearchResults
+import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
