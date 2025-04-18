@@ -6,6 +6,6 @@ import com.xorko.backlogmanager.game.domain.models.Game
 data class GameListState(
     val searchResults: List<Game> = emptyList(),
     val searchQuery: String = "",
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
     val errorMessage: UiText? = null,
 )
