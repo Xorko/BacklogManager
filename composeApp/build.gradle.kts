@@ -24,6 +24,10 @@ plugins {
 }
 
 kotlin {
+    compilerOptions {
+        optIn.add("expect-actual-classes")
+    }
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
