@@ -121,6 +121,7 @@ fun BackloggedGameListScreen(
                                         )
                                     },
                                     scrollState = backloggedGamesLazyListState,
+                                    modifier = Modifier.align(Alignment.TopStart),
                                 )
                         }
                     }

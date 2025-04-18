@@ -122,6 +122,7 @@ fun GameListScreen(
                                         )
                                     },
                                     scrollState = gamesLazyListState,
+                                    modifier = Modifier.align(Alignment.TopStart),
                                 )
                         }
                     }
