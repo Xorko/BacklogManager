@@ -445,10 +445,9 @@
 					"$(inherited)",
 					"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\n$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)",
 				);
-				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_FILE = "iosApp/Info-Debug.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.3;
-				KOTLIN_FRAMEWORK_BUILD_TYPE = "";
-				"KOTLIN_FRAMEWORK_BUILD_TYPE[arch=*]" = debug;
+				KOTLIN_FRAMEWORK_BUILD_TYPE = debug;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
