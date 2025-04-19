@@ -6,15 +6,14 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import com.xorko.backlogmanager.core.domain.logging.Logger as AppLogger
+import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 object HttpClientFactory {
     fun create(engine: HttpClientEngine) =
@@ -41,9 +40,15 @@ object HttpClientFactory {
             if (currentBuildType.isDebug()) {
                 AppLogger.i("Debug mode enabled. Enabling Ktor logging…", tag = this::class.simpleName)
                 install(Logging) {
-                    logger = Logger.DEFAULT
+                    logger = DefaultKtorLogger
                     level = LogLevel.ALL
                 }
             }
         }
+}
+
+private object DefaultKtorLogger : KtorLogger {
+    override fun log(message: String) {
+        AppLogger.v(message, tag = HttpClient::class.simpleName)
+    }
 }
