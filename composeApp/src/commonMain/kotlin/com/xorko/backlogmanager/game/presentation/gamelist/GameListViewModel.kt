@@ -58,23 +58,26 @@ class GameListViewModel(
             .distinctUntilChanged()
             .debounce(500L)
             .onEach { query ->
-                {
-                    Logger.d("New query: $query", tag = this::class.simpleName)
-                    when {
-                        query.isBlank() -> {
-                            _state.update {
-                                it.copy(
-                                    errorMessage = null,
-                                    searchResults = cachedGames,
-                                )
-                            }
-                            Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+                Logger.d("New query: $query", tag = this::class.simpleName)
+                when {
+                    query.isBlank() -> {
+                        _state.update {
+                            it.copy(
+                                errorMessage = null,
+                                searchResults = cachedGames,
+                            )
                         }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+                    }
 
-                        query.length >= 2 -> {
-                            searchJob?.cancel().also { Logger.d("Cancelling search job", tag = this::class.simpleName) }
-                            searchJob = searchGames(query)
+                    query.length >= 2 -> {
+                        searchJob?.cancel().also {
+                            Logger.d(
+                                "Cancelling search job",
+                                tag = this::class.simpleName,
+                            )
                         }
+                        searchJob = searchGames(query)
                     }
                 }
             }.launchIn(viewModelScope)
