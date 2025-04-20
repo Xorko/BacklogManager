@@ -65,6 +65,7 @@ koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = 
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 koin-composeViewModel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
 koin-composeViewModelNavigation = { group = "io.insert-koin", name = "koin-compose-viewmodel-navigation", version.ref = "koin" }
+koin-ktor = { group = "io.insert-koin", name = "koin-ktor", version.ref = "koin" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 arrow-optics = { module = "io.arrow-kt:arrow-optics", version.ref = "arrow" }

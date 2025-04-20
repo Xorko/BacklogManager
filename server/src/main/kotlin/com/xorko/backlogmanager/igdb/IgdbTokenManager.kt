@@ -1,11 +1,11 @@
 package com.xorko.backlogmanager.igdb
 
 import com.xorko.backlogmanager.baseHttpClient
+import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.igdb.IgdbTokenManager.QueryParameters.CLIENT_ID_KEY
 import com.xorko.backlogmanager.igdb.IgdbTokenManager.QueryParameters.CLIENT_SECRET_KEY
 import com.xorko.backlogmanager.igdb.IgdbTokenManager.QueryParameters.GRANT_TYPE_KEY
 import com.xorko.backlogmanager.igdb.IgdbTokenManager.QueryParameters.GRANT_TYPE_VALUE
-import com.xorko.backlogmanager.utils.logger
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 import io.ktor.http.Parameters
@@ -13,8 +13,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 object IgdbTokenManager {
-    private val logger = logger<IgdbTokenManager>()
-
     private var token: String? = null
     private var tokenExpiresAt: Long = 0
 
@@ -28,7 +26,10 @@ object IgdbTokenManager {
     suspend fun getValidToken(): String {
         val currentTime = System.currentTimeMillis()
         if (token == null || currentTime >= tokenExpiresAt) {
-            logger.info("Token is expired or not initialized. Refreshing token...")
+            Logger.i(
+                message = "Token is expired or not initialized. Refreshing token...",
+                tag = this::class.simpleName,
+            )
             refreshToken()
         }
         return token!!
