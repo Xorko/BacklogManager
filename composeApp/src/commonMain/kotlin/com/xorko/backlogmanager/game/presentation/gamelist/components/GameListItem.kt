@@ -92,7 +92,7 @@ private fun GameInfo(
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = game.released.toString(),
+            text = game.initialReleaseDate.toString(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
         )

@@ -108,7 +108,7 @@ private fun generateGame(index: Int) =
         id = index.toLong(),
         name = "Game $index",
         description = "Description $index",
-        released = LocalDate(year = 2015, monthNumber = 7, dayOfMonth = 15),
+        initialReleaseDate = LocalDate(year = 2015, monthNumber = 7, dayOfMonth = 15),
         developers = listOf(Developer(id = index.toLong(), name = "Developer $index")),
         publishers = listOf(Publisher(id = index.toLong(), name = "Publisher $index")),
         coverUrl = "https://picsum.photos/200/300",
