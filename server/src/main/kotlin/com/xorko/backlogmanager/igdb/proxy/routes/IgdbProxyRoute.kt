@@ -13,7 +13,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 import org.koin.ktor.ext.inject
 
-private const val IGDB_PROXY_BASE_ROUTE = "/igdb/proxy"
+private const val IGDB_PROXY_BASE_ROUTE = "/igdb/proxy/"
 
 fun Route.igdbProxyRoute() {
     val proxyService by inject<IgdbProxyService>()
