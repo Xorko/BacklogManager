@@ -1,9 +1,9 @@
 package com.xorko.backlogmanager.core.data.logging
 
 import co.touchlab.kermit.Logger
-import co.touchlab.kermit.Severity
 import co.touchlab.kermit.StaticConfig
 import co.touchlab.kermit.platformLogWriter
+import com.xorko.backlogmanager.core.data.configuration.currentEnvironment
 import com.xorko.backlogmanager.core.domain.logging.AppLogger
 
 object KermitAppLogger : AppLogger {
@@ -13,7 +13,7 @@ object KermitAppLogger : AppLogger {
         Logger(
             config =
                 StaticConfig(
-                    minSeverity = Severity.Verbose,
+                    minSeverity = currentEnvironment.toMinSeverity(),
                     logWriterList = listOf(platformLogWriter()),
                 ),
         )
