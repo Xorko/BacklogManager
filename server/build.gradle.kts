@@ -19,7 +19,7 @@ dependencies {
     implementation(libs.bundles.ktor.server)
     implementation(libs.bundles.ktor.client)
     implementation(libs.koin.core)
-    implementation(libs.koin.ktor)
+    implementation(libs.koin.ktor3)
     testImplementation(libs.kotlin.test.junit)
 }
 

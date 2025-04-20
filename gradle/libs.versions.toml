@@ -20,7 +20,7 @@ datetime = "0.6.2"
 ksp = "2.1.20-1.0.32"
 ktor = "3.1.2"
 logback = "1.5.17"
-koin = "4.0.3"
+koin = "4.1.0-Beta7"
 coil = "3.1.0"
 arrow = "2.0.1"
 room = "2.7.0"
@@ -65,7 +65,7 @@ koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = 
 koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = "koin" }
 koin-composeViewModel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
 koin-composeViewModelNavigation = { group = "io.insert-koin", name = "koin-compose-viewmodel-navigation", version.ref = "koin" }
-koin-ktor = { group = "io.insert-koin", name = "koin-ktor", version.ref = "koin" }
+koin-ktor3 = { group = "io.insert-koin", name = "koin-ktor3", version.ref = "koin" }
 arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
 arrow-optics = { module = "io.arrow-kt:arrow-optics", version.ref = "arrow" }

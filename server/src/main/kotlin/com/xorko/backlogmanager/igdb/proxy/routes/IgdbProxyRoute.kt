@@ -11,10 +11,12 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
+import org.koin.ktor.ext.inject
 
 private const val IGDB_PROXY_BASE_ROUTE = "/igdb/proxy"
 
-fun Route.igdbProxyRoute(proxyService: IgdbProxyService) {
+fun Route.igdbProxyRoute() {
+    val proxyService by inject<IgdbProxyService>()
     route("$IGDB_PROXY_BASE_ROUTE{...}") {
         handle {
             val url = call.request.uri.removePrefix(IGDB_PROXY_BASE_ROUTE)
