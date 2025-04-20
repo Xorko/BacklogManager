@@ -3,7 +3,7 @@ package com.xorko.backlogmanager.game.data.repositories
 import arrow.core.Either
 import com.xorko.backlogmanager.core.domain.DataError
 import com.xorko.backlogmanager.core.domain.logging.Logger
-import com.xorko.backlogmanager.game.data.mappers.toGame
+import com.xorko.backlogmanager.game.data.dto.igdb.mappers.toGame
 import com.xorko.backlogmanager.game.data.network.RemoteGameDataSource
 import com.xorko.backlogmanager.game.domain.GameRepository
 import com.xorko.backlogmanager.game.domain.models.Game

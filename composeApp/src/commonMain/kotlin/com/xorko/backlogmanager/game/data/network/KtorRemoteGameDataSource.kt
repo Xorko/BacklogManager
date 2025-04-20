@@ -4,12 +4,13 @@ import arrow.core.Either
 import com.xorko.backlogmanager.core.data.configuration.apiConfig
 import com.xorko.backlogmanager.core.data.safeCall
 import com.xorko.backlogmanager.core.domain.DataError
-import com.xorko.backlogmanager.game.data.dto.GameDto
+import com.xorko.backlogmanager.game.data.dto.igdb.IgdbGameDto
+import com.xorko.backlogmanager.game.data.utils.IgdbQueryFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
-const val IGDB_ROUTE = "/igdb/v4"
+const val IGDB_ROUTE = "/igdb/proxy/v4"
 
 class KtorRemoteGameDataSource(
     private val httpClient: HttpClient,
@@ -17,7 +18,7 @@ class KtorRemoteGameDataSource(
     override suspend fun searchGames(
         query: String,
         resultLimit: Int?,
-    ): Either<DataError.Remote, List<GameDto>> =
+    ): Either<DataError.Remote, List<IgdbGameDto>> =
         safeCall {
             httpClient.post(
                 urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
@@ -34,7 +35,7 @@ class KtorRemoteGameDataSource(
     override suspend fun getGames(
         resultLimit: Int?,
         resultOffset: Int?,
-    ): Either<DataError.Remote, List<GameDto>> =
+    ): Either<DataError.Remote, List<IgdbGameDto>> =
         safeCall {
             httpClient.post(
                 urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
@@ -48,7 +49,7 @@ class KtorRemoteGameDataSource(
             }
         }
 
-    override suspend fun getGameById(id: Long): Either<DataError.Remote, GameDto?> =
+    override suspend fun getGameById(id: Long): Either<DataError.Remote, IgdbGameDto?> =
         safeCall {
             httpClient.post(
                 urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
