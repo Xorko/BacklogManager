@@ -1,4 +1,4 @@
-package com.xorko.backlogmanager.game.data.network
+package com.xorko.backlogmanager.game.data.utils
 
 object IgdbQueryFactory {
     fun searchGames(

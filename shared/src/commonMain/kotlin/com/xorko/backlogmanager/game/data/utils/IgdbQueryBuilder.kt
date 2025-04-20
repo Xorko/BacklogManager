@@ -1,4 +1,4 @@
-package com.xorko.backlogmanager.game.data.network
+package com.xorko.backlogmanager.game.data.utils
 
 import com.xorko.backlogmanager.core.domain.logging.Logger
 
