@@ -1,5 +1,8 @@
 package com.xorko.backlogmanager.core.domain.logging
 
+/**
+ * Generic logger interface.
+ */
 interface AppLogger {
     fun e(
         message: String,
