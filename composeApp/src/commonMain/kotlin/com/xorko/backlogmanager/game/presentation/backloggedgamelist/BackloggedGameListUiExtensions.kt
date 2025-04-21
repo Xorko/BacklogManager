@@ -13,7 +13,6 @@ import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
-import com.xorko.backlogmanager.game.domain.models.Game
 import kotlinx.datetime.LocalDateTime
 import kotlin.reflect.KClass
 
@@ -39,12 +38,6 @@ fun BackloggedGame.getLongStatus(): UiText =
         is NowPlaying -> getLongStatus()
         is Finished -> getLongStatus()
     }
-
-fun Game.formatDevelopersAndPublishers(): String = "${formatDeveloperList()} / ${formatPublisherList()}"
-
-fun Game.formatPublisherList(): String = publishers.joinToString { it.name }
-
-fun Game.formatDeveloperList(): String = developers.joinToString { it.name }
 
 private fun ToPlay.getLongStatus(): UiText =
     UiText.StringResourceId(

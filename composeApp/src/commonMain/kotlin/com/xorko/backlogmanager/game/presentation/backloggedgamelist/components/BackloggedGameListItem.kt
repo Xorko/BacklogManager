@@ -29,10 +29,10 @@ import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.core.presentation.theme.PrimaryLight
 import com.xorko.backlogmanager.core.presentation.theme.Success
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.formatDevelopersAndPublishers
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getLongStatus
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
+import com.xorko.backlogmanager.game.presentation.components.Companies
 
 @Composable
 fun BackloggedGameListItem(
@@ -102,11 +102,8 @@ private fun GameInfo(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Text(
-                text = backloggedGame.game.formatDevelopersAndPublishers(),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-            )
+            Companies(companies = backloggedGame.game.developers, modifier = Modifier)
+            Companies(companies = backloggedGame.game.publishers, modifier = Modifier)
             StatusChip(
                 status = backloggedGame.getStatus().asString(),
                 backgroundColor = backloggedGame.getChipColor(),

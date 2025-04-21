@@ -88,7 +88,8 @@ private fun GameInfo(
             verticalArrangement = Arrangement.spacedBy(Dimens.spacingSmall),
         ) {
             GameTitle(game = game)
-            GameDevelopersAndPublishers(game = game)
+            Companies(companies = game.developers, modifier = Modifier)
+            Companies(companies = game.publishers, modifier = Modifier)
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
