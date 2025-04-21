@@ -5,12 +5,18 @@ import com.xorko.backlogmanager.core.data.configuration.apiConfig
 import com.xorko.backlogmanager.core.data.safeCall
 import com.xorko.backlogmanager.core.domain.DataError
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbGameDto
+import com.xorko.backlogmanager.game.data.dto.shared.SharedGameDto
 import com.xorko.backlogmanager.game.data.utils.IgdbQueryFactory
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.http.parameters
 
-const val IGDB_ROUTE = "/igdb/proxy"
+private const val IGDB_ROUTE = "/igdb/proxy"
+private const val LIMIT_PARAM = "limit"
+private const val OFFSET_PARAM = "offset"
 
 class KtorRemoteGameDataSource(
     private val httpClient: HttpClient,
@@ -35,17 +41,30 @@ class KtorRemoteGameDataSource(
     override suspend fun getGames(
         resultLimit: Int?,
         resultOffset: Int?,
-    ): Either<DataError.Remote, List<IgdbGameDto>> =
+    ): Either<DataError.Remote, List<SharedGameDto>> =
         safeCall {
-            httpClient.post(
-                urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
+            httpClient.get(
+                urlString = "${apiConfig.baseUrl}/games",
             ) {
-                setBody(
-                    IgdbQueryFactory.getGames(
-                        limit = resultLimit,
-                        offset = resultOffset,
-                    ),
-                )
+                parameters {
+                    resultLimit?.let { parameter(LIMIT_PARAM, it) }
+                    resultOffset?.let { parameter(OFFSET_PARAM, it) }
+                }
+            }
+        }
+
+    override suspend fun getPopularGames(
+        resultLimit: Int?,
+        resultOffset: Int?,
+    ): Either<DataError.Remote, List<SharedGameDto>> =
+        safeCall {
+            httpClient.get(
+                urlString = "${apiConfig.baseUrl}/games/popular",
+            ) {
+                parameters {
+                    resultLimit?.let { parameter(LIMIT_PARAM, it) }
+                    resultOffset?.let { parameter(OFFSET_PARAM, it) }
+                }
             }
         }
 

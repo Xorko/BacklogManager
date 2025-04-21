@@ -8,4 +8,6 @@ data class IgdbInvolvedCompanyDto(
     val company: IgdbCompanyDto,
     val developer: Boolean,
     val publisher: Boolean,
+    val porting: Boolean,
+    val supporting: Boolean,
 )

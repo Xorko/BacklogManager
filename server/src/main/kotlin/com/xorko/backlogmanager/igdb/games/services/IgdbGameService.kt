@@ -42,4 +42,27 @@ class IgdbGameService {
             else -> throw ServerException("Unexpected status code ${response.status}")
         }
     }
+
+    suspend fun getGamesByIds(ids: List<Long>): List<IgdbGameDto> {
+        val response =
+            try {
+                igdbHttpClient.post(IGDB_GAMES_ROUTE) {
+                    setBody(
+                        IgdbQueryFactory.getGamesById(ids),
+                    )
+                }
+            } catch (_: Exception) {
+                throw RemoteException("IGDB is unavailable")
+            }
+
+        return when (response.status) {
+            HttpStatusCode.OK -> response.body()
+            HttpStatusCode.NotFound -> throw RemoteException("Resource not found")
+            HttpStatusCode.BadRequest -> throw ServerException("Invalid request")
+            HttpStatusCode.Unauthorized -> throw UnauthorizedException("Invalid API token")
+            HttpStatusCode.ServiceUnavailable -> throw RemoteException("IGDB is unavailable")
+            HttpStatusCode.TooManyRequests -> throw ServerException("Limit rate reached")
+            else -> throw ServerException("Unexpected status code ${response.status}")
+        }
+    }
 }
