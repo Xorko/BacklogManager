@@ -5,11 +5,11 @@ import com.xorko.backlogmanager.game.data.dto.shared.SharedGameDto
 import com.xorko.backlogmanager.game.data.dto.shared.SharedOnlineRatingDto
 import com.xorko.backlogmanager.game.data.dto.shared.SharedPlatformDto
 import com.xorko.backlogmanager.game.data.dto.shared.SharedPublisherDto
-import com.xorko.backlogmanager.game.domain.models.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
 import com.xorko.backlogmanager.game.domain.models.Platform
-import com.xorko.backlogmanager.game.domain.models.Publisher
 import kotlinx.datetime.LocalDate
 
 // region SharedDto to Domain

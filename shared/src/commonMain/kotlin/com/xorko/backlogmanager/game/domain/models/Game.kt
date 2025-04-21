@@ -1,5 +1,7 @@
 package com.xorko.backlogmanager.game.domain.models
 
+import com.xorko.backlogmanager.game.domain.models.Company.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import kotlinx.datetime.LocalDate
 
 data class Game(

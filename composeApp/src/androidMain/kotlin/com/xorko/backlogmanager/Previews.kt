@@ -12,10 +12,10 @@ import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.theme.Background
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
-import com.xorko.backlogmanager.game.domain.models.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
-import com.xorko.backlogmanager.game.domain.models.Publisher
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListScreen
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListState
 import kotlinx.datetime.Clock

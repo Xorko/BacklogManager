@@ -3,11 +3,11 @@ package com.xorko.backlogmanager.game.data.dto.igdb.mappers
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbGameDto
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbInvolvedCompanyDto
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbPlatformDto
-import com.xorko.backlogmanager.game.domain.models.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Developer
+import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
 import com.xorko.backlogmanager.game.domain.models.Platform
-import com.xorko.backlogmanager.game.domain.models.Publisher
 import com.xorko.backlogmanager.utils.toLocalDate
 
 fun IgdbGameDto.toGame() =
@@ -19,7 +19,10 @@ fun IgdbGameDto.toGame() =
         coverUrl = cover?.imageId?.toCoverUrl(),
         artworksUrls = artworks?.mapNotNull { it.imageId.toCoverUrl() } ?: emptyList(),
         developers = involvedCompanies?.mapNotNull { it.toDeveloperOrNull() } ?: emptyList(),
-        publishers = involvedCompanies?.mapNotNull { it.toPublisherOrNull() } ?: emptyList(),
+        publishers =
+            involvedCompanies
+                ?.filter { !it.porting && !it.supporting }
+                ?.mapNotNull { it.toPublisherOrNull() } ?: emptyList(),
         criticsRating =
             makeOnlineRatingOrNull(
                 rating = aggregatedRating,

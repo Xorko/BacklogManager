@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import com.xorko.backlogmanager.game.domain.models.Company
 import com.xorko.backlogmanager.game.domain.models.Game
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.formatDevelopersAndPublishers
 
 @Composable
 fun GameTitle(
@@ -25,12 +25,14 @@ fun GameTitle(
 }
 
 @Composable
-fun GameDevelopersAndPublishers(
-    game: Game,
+fun Companies(
+    companies: List<Company>,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = game.formatDevelopersAndPublishers(),
+        text = companies.joinToString { it.name },
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
         modifier = modifier,
