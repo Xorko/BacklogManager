@@ -8,27 +8,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
+import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
+import com.xorko.backlogmanager.core.presentation.shouldLoadMoreItems
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
 import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
 import com.xorko.backlogmanager.game.presentation.gamelist.components.GameList
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -56,74 +64,106 @@ fun GameListScreen(
     onAction: (GameListActions) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+    val coroutineScope = rememberCoroutineScope()
 
-    val gamesLazyListState = rememberLazyListState()
+    val gameListState = rememberLazyListState()
 
+    // Scroll to top when search results are displayed
     LaunchedEffect(state.searchResults) {
-        gamesLazyListState.animateScrollToItem(0)
+        if (state.searchQuery.isNotBlank()) {
+            snapshotFlow { gameListState.layoutInfo.totalItemsCount }
+                .filter { it > 0 }
+                .first()
+
+            gameListState.animateScrollToItem(0)
+        }
     }
 
-    Column(
+    LaunchedEffect(Unit) {
+        snapshotFlow { gameListState.shouldLoadMoreItems() }
+            .distinctUntilChanged()
+            .collect { shouldLoadMore ->
+                onAction(GameListActions.OnListEndAlmostReached)
+            }
+    }
+
+    Scaffold(
+        floatingActionButton = {
+            if (gameListState.firstVisibleItemIndex > 0) {
+                ScrollToTopFab(
+                    onClick = {
+                        coroutineScope.launch {
+                            gameListState.animateScrollToItem(0)
+                        }
+                    },
+                )
+            }
+        },
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background)
-                .statusBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        GameSearchBar(
-            searchQuery = state.searchQuery,
-            onSearchQueryChange = {
-                onAction(GameListActions.OnSearchQueryChange(it))
-            },
-            onImeSearch = {
-                keyboardController?.hide()
-            },
-            modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
-        )
-        Spacer(modifier = Modifier.height(Dimens.spacingMedium))
-        Surface(
+                .background(color = MaterialTheme.colorScheme.background),
+    ) { innerPadding ->
+        Column(
             modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                Modifier.padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            GameSearchBar(
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = {
+                    onAction(GameListActions.OnSearchQueryChange(it))
+                },
+                onImeSearch = {
+                    keyboardController?.hide()
+                },
+                modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(Dimens.spacingMedium))
+            Surface(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        when {
-                            state.errorMessage != null ->
-                                ErrorMessage(
-                                    message = state.errorMessage.asString(),
-                                    modifier =
-                                        Modifier.padding(
-                                            Dimens.paddingMedium,
-                                        ),
-                                )
-
-                            state.searchResults.isEmpty() -> NoSearchResults()
-
-                            else ->
-                                GameList(
-                                    games = state.searchResults,
-                                    onGameClicked = {
-                                        onAction(
-                                            GameListActions.OnGameClicked(
-                                                it,
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator()
+                        } else {
+                            when {
+                                state.errorMessage != null ->
+                                    ErrorMessage(
+                                        message = state.errorMessage.asString(),
+                                        modifier =
+                                            Modifier.padding(
+                                                Dimens.paddingMedium,
                                             ),
-                                        )
-                                    },
-                                    scrollState = gamesLazyListState,
-                                    modifier = Modifier.align(Alignment.TopStart),
-                                )
+                                    )
+
+                                state.searchResults.isEmpty() -> NoSearchResults()
+
+                                else ->
+                                    GameList(
+                                        games = state.searchResults,
+                                        onGameClicked = {
+                                            onAction(
+                                                GameListActions.OnGameClicked(
+                                                    it,
+                                                ),
+                                            )
+                                        },
+                                        scrollState = gameListState,
+                                        isLoadingMoreGames = state.isLoadingMoreGames,
+                                        modifier = Modifier.align(Alignment.TopStart),
+                                    )
+                            }
                         }
                     }
                 }

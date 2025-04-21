@@ -10,4 +10,6 @@ sealed interface GameListActions {
     data class OnGameClicked(
         val game: Game,
     ) : GameListActions
+
+    data object OnListEndAlmostReached : GameListActions
 }

@@ -31,6 +31,8 @@ class GameListViewModel(
     private var cachedGames: List<Game> = emptyList()
     private var searchJob: Job? = null
 
+    private var currentOffset = 0
+
     init {
         observeSearchQuery()
         fetchGames()
@@ -42,12 +44,9 @@ class GameListViewModel(
             is GameListActions.OnGameClicked -> {
             }
 
-            is GameListActions.OnSearchQueryChange -> {
-                _state.update {
-                    it.copy(searchQuery = action.query)
-                }
-                Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
-            }
+            is GameListActions.OnSearchQueryChange -> handleOnSearchQueryChange(action.query)
+
+            is GameListActions.OnListEndAlmostReached -> handleOnListEndAlmostReached()
         }
     }
 
@@ -82,6 +81,21 @@ class GameListViewModel(
                 }
             }.launchIn(viewModelScope)
     }
+
+    private fun handleOnSearchQueryChange(query: String) {
+        _state.update {
+            it.copy(searchQuery = query)
+        }
+        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+    }
+
+    private fun handleOnListEndAlmostReached(): Unit =
+        with(state.value) {
+            if (isLoading || isLoadingMoreGames || searchQuery.isNotBlank()) return
+
+            fetchMoreGames()
+            Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+        }
 
     private fun searchGames(query: String) =
         viewModelScope.launch {
@@ -137,6 +151,40 @@ class GameListViewModel(
                             it.copy(
                                 isLoading = false,
                                 searchResults = games,
+                                errorMessage = null,
+                            )
+                        }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+                    },
+                )
+        }
+
+    private fun fetchMoreGames() =
+        viewModelScope.launch {
+            _state.update { it.copy(isLoadingMoreGames = true) }
+            gameRepository
+                .getGames(
+                    offset = state.value.searchResults.size,
+                    limit = GAMES_PER_PAGE,
+                ).fold(
+                    ifLeft = { error ->
+                        Logger.e("Error fetching games: $error", tag = this::class.simpleName)
+                        _state.update {
+                            it.copy(
+                                isLoadingMoreGames = false,
+                                errorMessage = error.toUiText(),
+                            )
+                        }
+                        Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
+                    },
+                    ifRight = {
+                        Logger.v("Fetched games: $it", tag = this::class.simpleName)
+                        currentOffset += it.size
+                        cachedGames = cachedGames + it
+                        _state.update {
+                            it.copy(
+                                isLoadingMoreGames = false,
+                                searchResults = cachedGames,
                                 errorMessage = null,
                             )
                         }

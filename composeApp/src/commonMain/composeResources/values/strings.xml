@@ -8,6 +8,7 @@
     <string name="error_serialization">Couldn't parse data</string>
     <string name="search_hint">Search...</string>
     <string name="clear_search">Clear search</string>
+    <string name="scroll_to_top">Scroll to top</string>"
     <string name="no_search_results">No luck this time. Maybe try another title?</string>
     <string name="no_filter_result_to_play">Nothing in your backlog? Let’s fix that</string>
     <string name="no_filter_result_now_playing">You’ve got a whole backlog waiting. Pick one and dive in!</string>

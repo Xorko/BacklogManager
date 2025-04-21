@@ -23,7 +23,7 @@ import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerShapes
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
-import com.xorko.backlogmanager.game.presentation.components.GameDevelopersAndPublishers
+import com.xorko.backlogmanager.game.presentation.components.Companies
 import com.xorko.backlogmanager.game.presentation.components.GameTitle
 
 @Composable
@@ -37,6 +37,10 @@ fun GameListItem(
         modifier = modifier,
         shape = BacklogManagerShapes.medium,
         elevation = CardDefaults.cardElevation(Dimens.elevationSmall),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
     ) {
         Row(
             modifier =

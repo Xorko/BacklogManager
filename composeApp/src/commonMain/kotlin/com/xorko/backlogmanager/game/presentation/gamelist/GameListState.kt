@@ -7,5 +7,6 @@ data class GameListState(
     val searchResults: List<Game> = emptyList(),
     val searchQuery: String = "",
     val isLoading: Boolean = true,
+    val isLoadingMoreGames: Boolean = false,
     val errorMessage: UiText? = null,
 )
