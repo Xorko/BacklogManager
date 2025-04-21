@@ -25,6 +25,7 @@ import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
 import com.xorko.backlogmanager.game.presentation.components.Companies
 import com.xorko.backlogmanager.game.presentation.components.GameTitle
+import com.xorko.backlogmanager.utils.toLongDateFormat
 
 @Composable
 fun GameListItem(
@@ -97,7 +98,7 @@ private fun GameInfo(
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = game.initialReleaseDate.toString(),
+            text = game.initialReleaseDate?.toLongDateFormat() ?: "",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
         )
