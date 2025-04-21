@@ -1,15 +1,14 @@
 package com.xorko.backlogmanager.utils
 
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import java.text.DateFormat
-import java.util.Date
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-actual fun LocalDateTime.toLongDateFormat(): String {
-    val formatter = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
-    val instant = toInstant(TimeZone.currentSystemDefault())
+private fun getFormatter() = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.getDefault())
 
-    return formatter.format(Date(instant.toEpochMilliseconds()))
-}
+actual fun LocalDateTime.toLongDateFormat(): String = getFormatter().format(this.toJavaLocalDateTime())
+
+actual fun LocalDate.toLongDateFormat(): String = getFormatter().format(this.toJavaLocalDate())

@@ -15,3 +15,5 @@ fun Long.toLocalDate(): LocalDate {
 }
 
 expect fun LocalDateTime.toLongDateFormat(): String
+
+expect fun LocalDate.toLongDateFormat(): String
