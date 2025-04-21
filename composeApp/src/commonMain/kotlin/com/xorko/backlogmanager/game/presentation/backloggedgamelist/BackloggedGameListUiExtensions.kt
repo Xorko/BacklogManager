@@ -13,7 +13,7 @@ import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
-import kotlinx.datetime.LocalDateTime
+import com.xorko.backlogmanager.utils.toLongDateFormat
 import kotlin.reflect.KClass
 
 fun BackloggedGame.getStatus(): UiText =
@@ -56,5 +56,3 @@ private fun Finished.getLongStatus(): UiText =
         Res.string.backlogged_game_finished_on,
         arrayOf(backloggedDate.toLongDateFormat()),
     )
-
-expect fun LocalDateTime.toLongDateFormat(): String

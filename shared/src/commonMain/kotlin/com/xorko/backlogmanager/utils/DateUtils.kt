@@ -2,6 +2,7 @@ package com.xorko.backlogmanager.utils
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -12,3 +13,5 @@ fun Long.toLocalDate(): LocalDate {
     val instant = Instant.fromEpochSeconds(this)
     return instant.toLocalDateTime(TimeZone.UTC).date
 }
+
+expect fun LocalDateTime.toLongDateFormat(): String
