@@ -28,14 +28,15 @@ class GameListViewModel(
     private val _state = MutableStateFlow(GameListState())
     val state = _state.asStateFlow()
 
-    private var cachedGames: List<Game> = emptyList()
-    private var searchJob: Job? = null
-
     private var currentOffset = 0
+    private var cachedGames: List<Game> = emptyList()
+
+    private var fetchGamesJob: Job? = null
+    private var searchJob: Job? = null
 
     init {
         observeSearchQuery()
-        fetchGames()
+        fetchGamesJob = fetchGames()
         Logger.d("GameListViewModel initialized", tag = this::class.simpleName)
     }
 
@@ -93,7 +94,8 @@ class GameListViewModel(
         with(state.value) {
             if (isLoading || isLoadingMoreGames || searchQuery.isNotBlank()) return
 
-            fetchMoreGames()
+            fetchGamesJob?.cancel()
+            fetchGamesJob = fetchMoreGames()
             Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
         }
 
