@@ -124,8 +124,8 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    flavorDimensions += listOf(flavorDimension)
 
-    flavorDimensions(flavorDimension)
     productFlavors {
         create(dev) {
             dimension = flavorDimension
