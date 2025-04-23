@@ -8,5 +8,7 @@ interface GamesRepository {
         limit: Int,
     ): List<Game>
 
+    suspend fun getGameById(id: Long): Game
+
     suspend fun getGamesById(ids: List<Long>): List<Game>
 }

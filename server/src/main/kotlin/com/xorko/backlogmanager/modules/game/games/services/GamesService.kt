@@ -17,5 +17,7 @@ class GamesService(
             offset = offset,
         )
 
+    suspend fun getGameById(id: Long): Game = gamesRepository.getGameById(id = id)
+
     suspend fun getGamesByIds(ids: List<Long>): List<Game> = gamesRepository.getGamesById(ids = ids)
 }

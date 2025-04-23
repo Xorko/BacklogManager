@@ -6,7 +6,7 @@ object IgdbRoutes {
     object TokenRetrieval {
         const val URL = "https://id.twitch.tv/oauth2/token"
 
-        object Params {
+        object QueryParams {
             const val CLIENT_ID = "client_id"
             const val CLIENT_SECRET = "client_secret"
             const val GRANT_TYPE = "grant_type"

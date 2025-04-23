@@ -13,6 +13,8 @@ class IgdbGamesRepository(
         limit: Int,
     ): List<Game> = igdbClient.getGames(limit = limit, offset = offset).map { it.toGame() }
 
+    override suspend fun getGameById(id: Long): Game = igdbClient.getGameById(id).firstOrNull()?.toGame() ?: throw GameNotFoundException()
+
     override suspend fun getGamesById(ids: List<Long>): List<Game> {
         val games = igdbClient.getGamesById(ids)
         if (games.size != ids.size) {

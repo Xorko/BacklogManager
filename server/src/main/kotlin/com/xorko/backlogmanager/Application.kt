@@ -12,6 +12,7 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
@@ -59,6 +60,17 @@ fun Application.module() {
                     ApiError(
                         error = cause.message,
                         code = cause.statusCode.value,
+                    ),
+            )
+        }
+
+        exception<BadRequestException> { call, cause ->
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message =
+                    ApiError(
+                        error = HttpStatusCode.BadRequest.description,
+                        code = HttpStatusCode.BadRequest.value,
                     ),
             )
         }

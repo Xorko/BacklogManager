@@ -27,6 +27,15 @@ class IgdbClient(
             }
         }
 
+    suspend fun getGameById(id: Long): List<IgdbGameDto> =
+        handleApiRequest {
+            httpClient.post(IgdbRoutes.Games.ROUTE) {
+                setBody(
+                    IgdbQueryFactory.getGameById(id = id),
+                )
+            }
+        }
+
     suspend fun getGamesById(ids: List<Long>): List<IgdbGameDto> =
         handleApiRequest {
             httpClient.post(IgdbRoutes.Games.ROUTE) {

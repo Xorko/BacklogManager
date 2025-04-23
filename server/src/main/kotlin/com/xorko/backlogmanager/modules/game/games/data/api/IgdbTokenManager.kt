@@ -35,14 +35,14 @@ object IgdbTokenManager : KoinComponent {
                 .post(IgdbRoutes.TokenRetrieval.URL) {
                     url {
                         with(parameters) {
-                            append(IgdbRoutes.TokenRetrieval.Params.CLIENT_ID, IgdbConfig.clientId)
+                            append(IgdbRoutes.TokenRetrieval.QueryParams.CLIENT_ID, IgdbConfig.clientId)
                             append(
-                                IgdbRoutes.TokenRetrieval.Params.CLIENT_SECRET,
+                                IgdbRoutes.TokenRetrieval.QueryParams.CLIENT_SECRET,
                                 IgdbConfig.clientSecret,
                             )
                             append(
-                                IgdbRoutes.TokenRetrieval.Params.GRANT_TYPE,
-                                IgdbRoutes.TokenRetrieval.Params.Values.CLIENT_CREDENTIALS,
+                                IgdbRoutes.TokenRetrieval.QueryParams.GRANT_TYPE,
+                                IgdbRoutes.TokenRetrieval.QueryParams.Values.CLIENT_CREDENTIALS,
                             )
                         }
                     }
