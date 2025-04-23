@@ -44,7 +44,7 @@ class KtorRemoteGameDataSource(
     ): Either<DataError.Remote, List<SharedGameDto>> =
         safeCall {
             httpClient.get(
-                urlString = "${apiConfig.baseUrl}/games",
+                urlString = "${apiConfig.baseUrl}/game",
             ) {
                 parameters {
                     resultLimit?.let { parameter(LIMIT_PARAM, it) }
@@ -59,7 +59,7 @@ class KtorRemoteGameDataSource(
     ): Either<DataError.Remote, List<SharedGameDto>> =
         safeCall {
             httpClient.get(
-                urlString = "${apiConfig.baseUrl}/games/popular",
+                urlString = "${apiConfig.baseUrl}/game/popular",
             ) {
                 parameters {
                     resultLimit?.let { parameter(LIMIT_PARAM, it) }

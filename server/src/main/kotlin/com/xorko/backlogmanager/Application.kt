@@ -1,12 +1,11 @@
 package com.xorko.backlogmanager
 
-import com.xorko.backlogmanager.core.domain.exceptions.RemoteException
-import com.xorko.backlogmanager.core.domain.exceptions.ServerException
-import com.xorko.backlogmanager.core.domain.exceptions.UnauthorizedException
+import com.xorko.backlogmanager.core.domain.ApiError
+import com.xorko.backlogmanager.core.domain.ApiException
+import com.xorko.backlogmanager.core.domain.exceptions.ModuleException
 import com.xorko.backlogmanager.di.appModules
-import com.xorko.backlogmanager.igdb.games.routes.gameRoutes
-import com.xorko.backlogmanager.igdb.proxy.routes.igdbProxyRoute
-import io.ktor.http.ContentType
+import com.xorko.backlogmanager.modules.game.gameRoutes
+import com.xorko.backlogmanager.modules.igdb.proxy.igdbProxyRoute
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -15,6 +14,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -41,35 +41,36 @@ fun Application.module() {
     }
 
     install(StatusPages) {
-        exception<ServerException> { call, cause ->
-            call.respondText(
-                text = "Internal server error",
-                contentType = ContentType.Text.Plain,
-                status = HttpStatusCode.InternalServerError,
+        exception<ModuleException> { call, cause ->
+            call.respond(
+                status = cause.statusCode,
+                message =
+                    ApiError(
+                        error = cause.message,
+                        code = cause.statusCode.value,
+                    ),
             )
         }
 
-        exception<RemoteException> { call, cause ->
-            call.respondText(
-                text = "Service unavailable",
-                contentType = ContentType.Text.Plain,
-                status = HttpStatusCode.ServiceUnavailable,
-            )
-        }
-
-        exception<UnauthorizedException> { call, cause ->
-            call.respondText(
-                text = "Unauthorized",
-                contentType = ContentType.Text.Plain,
-                status = HttpStatusCode.Unauthorized,
+        exception<ApiException> { call, cause ->
+            call.respond(
+                status = cause.statusCode,
+                message =
+                    ApiError(
+                        error = cause.message,
+                        code = cause.statusCode.value,
+                    ),
             )
         }
 
         exception<Throwable> { call, cause ->
-            call.respondText(
-                text = "An unexpected error occurred",
-                contentType = ContentType.Text.Plain,
+            call.respond(
                 status = HttpStatusCode.InternalServerError,
+                message =
+                    ApiError(
+                        error = HttpStatusCode.InternalServerError.description,
+                        code = HttpStatusCode.InternalServerError.value,
+                    ),
             )
         }
     }
