@@ -44,5 +44,9 @@ class DefaultGameRepository(
                 games.map { it.toGame() }
             }
 
-    override suspend fun getGameById(id: Long): Either<DataError.Remote, Game?> = remoteGameDataSource.getGameById(id).map { it?.toGame() }
+    override suspend fun getGameById(id: Long): Either<DataError.Remote, Game?> =
+        remoteGameDataSource.getGameById(id).map {
+            Logger.v("game: $it", tag = this::class.simpleName)
+            it?.toGame()
+        }
 }
