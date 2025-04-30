@@ -9,12 +9,14 @@ import com.xorko.backlogmanager.game.domain.models.Game
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -26,19 +28,23 @@ class GameListViewModel(
     }
 
     private val _state = MutableStateFlow(GameListState())
-    val state = _state.asStateFlow()
+    val state =
+        _state
+            .onStart {
+                Logger.d("GameListViewModel state flow started", tag = this::class.simpleName)
+                observeSearchQuery()
+                fetchGamesJob = fetchGames()
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = GameListState(),
+            )
 
     private var currentOffset = 0
     private var cachedGames: List<Game> = emptyList()
 
     private var fetchGamesJob: Job? = null
     private var searchJob: Job? = null
-
-    init {
-        observeSearchQuery()
-        fetchGamesJob = fetchGames()
-        Logger.d("GameListViewModel initialized", tag = this::class.simpleName)
-    }
 
     fun onAction(action: GameListActions) {
         when (action) {
@@ -99,7 +105,7 @@ class GameListViewModel(
             Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
         }
 
-    private fun searchGames(query: String) =
+    private fun searchGames(query: String): Job =
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
@@ -130,7 +136,7 @@ class GameListViewModel(
                 )
         }
 
-    private fun fetchGames() =
+    private fun fetchGames(): Job =
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             gameRepository
@@ -161,7 +167,7 @@ class GameListViewModel(
                 )
         }
 
-    private fun fetchMoreGames() =
+    private fun fetchMoreGames(): Job =
         viewModelScope.launch {
             _state.update { it.copy(isLoadingMoreGames = true) }
             gameRepository
