@@ -68,14 +68,10 @@ class KtorRemoteGameDataSource(
             }
         }
 
-    override suspend fun getGameById(id: Long): Either<DataError.Remote, IgdbGameDto?> =
+    override suspend fun getGameById(id: Long): Either<DataError.Remote, SharedGameDto?> =
         safeCall {
-            httpClient.post(
-                urlString = "${apiConfig.baseUrl}$IGDB_ROUTE/games",
-            ) {
-                setBody(
-                    IgdbQueryFactory.getGameById(id),
-                )
-            }
+            httpClient.get(
+                urlString = "${apiConfig.baseUrl}/game/$id",
+            )
         }
 }

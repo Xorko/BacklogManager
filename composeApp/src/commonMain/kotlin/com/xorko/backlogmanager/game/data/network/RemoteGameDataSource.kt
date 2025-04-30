@@ -21,5 +21,5 @@ interface RemoteGameDataSource {
         resultOffset: Int? = null,
     ): Either<DataError.Remote, List<SharedGameDto>>
 
-    suspend fun getGameById(id: Long): Either<DataError.Remote, IgdbGameDto?>
+    suspend fun getGameById(id: Long): Either<DataError.Remote, SharedGameDto?>
 }
