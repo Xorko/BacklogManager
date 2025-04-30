@@ -5,6 +5,7 @@ import com.xorko.backlogmanager.game.data.network.RemoteGameDataSource
 import com.xorko.backlogmanager.game.data.repositories.DefaultGameRepository
 import com.xorko.backlogmanager.game.domain.GameRepository
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListViewModel
+import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsViewModel
 import com.xorko.backlogmanager.game.presentation.gamelist.GameListViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -18,4 +19,5 @@ val gameModule =
 
         viewModelOf(::GameListViewModel)
         viewModelOf(::BackloggedGameListViewModel)
+        viewModelOf(::GameDetailsViewModel)
     }

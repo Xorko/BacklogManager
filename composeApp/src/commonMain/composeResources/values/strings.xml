@@ -6,6 +6,7 @@
     <string name="error_disk_full">Looks like your storage is full</string>
     <string name="error_too_many_request">Looks like you exceeded your quota</string>
     <string name="error_serialization">Couldn't parse data</string>
+    <string name="error_game_not_found">Couldn't retrieve data for this game</string>
     <string name="search_hint">Search...</string>
     <string name="clear_search">Clear search</string>
     <string name="scroll_to_top">Scroll to top</string>"
@@ -21,4 +22,7 @@
     <string name="backlogged_game_started_on">Started on %1$s</string>
     <string name="backlogged_game_finished_on">Finished on %1$s</string>
     <string name="game_cover_artwork_description">Artwork of %1$s</string>
+    <string name="game_details_screen_title">Game details</string>
+    <string name="add_to_backlog">Add to backlog</string>
+    <string name="remove_from_backlog">Remove from backlog</string>
 </resources>
