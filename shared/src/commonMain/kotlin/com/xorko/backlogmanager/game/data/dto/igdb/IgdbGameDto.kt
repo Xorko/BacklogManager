@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class IgdbGameDto(
     val id: Long,
     val name: String,
+    val genres: List<IgdbGenreDto>? = null,
     val summary: String? = null,
     val cover: IgdbCoverDto? = null,
     val artworks: List<IgdbArtworkDto>? = null,

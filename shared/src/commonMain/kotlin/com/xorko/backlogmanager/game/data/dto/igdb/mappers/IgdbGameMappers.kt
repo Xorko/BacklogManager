@@ -1,11 +1,13 @@
 package com.xorko.backlogmanager.game.data.dto.igdb.mappers
 
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbGameDto
+import com.xorko.backlogmanager.game.data.dto.igdb.IgdbGenreDto
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbInvolvedCompanyDto
 import com.xorko.backlogmanager.game.data.dto.igdb.IgdbPlatformDto
 import com.xorko.backlogmanager.game.domain.models.Company.Developer
 import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import com.xorko.backlogmanager.game.domain.models.Game
+import com.xorko.backlogmanager.game.domain.models.Genre
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
 import com.xorko.backlogmanager.game.domain.models.Platform
 import com.xorko.backlogmanager.utils.toLocalDate
@@ -15,6 +17,7 @@ fun IgdbGameDto.toGame() =
         id = id,
         name = name,
         description = summary ?: "",
+        genres = genres?.map { it.toGenre() } ?: emptyList(),
         initialReleaseDate = firstReleaseDate?.toLocalDate(),
         coverUrl = cover?.imageId?.toCoverUrl(),
         artworksUrls = artworks?.mapNotNull { it.imageId.toCoverUrl() } ?: emptyList(),
@@ -34,6 +37,12 @@ fun IgdbGameDto.toGame() =
                 count = ratingCount,
             ),
         platforms = platforms?.map { it.toPlatform() } ?: emptyList(),
+    )
+
+fun IgdbGenreDto.toGenre() =
+    Genre(
+        id = id,
+        name = name,
     )
 
 fun IgdbPlatformDto.toPlatform() =

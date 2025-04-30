@@ -7,6 +7,7 @@ data class SharedGameDto(
     val id: Long,
     val name: String,
     val description: String? = null,
+    val genres: List<SharedGenreDto>? = null,
     val coverUrl: String? = null,
     val artworksUrls: List<String>? = null,
     val platforms: List<SharedPlatformDto>? = null,

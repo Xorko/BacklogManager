@@ -6,6 +6,7 @@ object IgdbQueryFactory {
             "id",
             "name",
             "summary",
+            "genres.name",
             "first_release_date",
             "platforms.name",
             "rating",

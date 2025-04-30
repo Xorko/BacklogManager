@@ -85,6 +85,7 @@ val backloggedGameList =
                     game = generateGame(it),
                     backloggedDate = randomDateTimeBetween(),
                 )
+
             1 ->
                 BackloggedGame.NowPlaying(
                     id = it.toString(),
@@ -92,6 +93,7 @@ val backloggedGameList =
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
                 )
+
             else ->
                 BackloggedGame.Finished(
                     id = it.toString(),
@@ -124,6 +126,7 @@ private fun generateGame(index: Int) =
             ),
         platforms = emptyList(),
         artworksUrls = emptyList(),
+        genres = emptyList(),
     )
 
 fun randomDateTimeBetween(
