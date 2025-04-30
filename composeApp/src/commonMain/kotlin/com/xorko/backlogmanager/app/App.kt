@@ -1,17 +1,16 @@
 package com.xorko.backlogmanager.app
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
@@ -21,9 +20,30 @@ import com.xorko.backlogmanager.core.data.configuration.currentBuildType
 import com.xorko.backlogmanager.core.data.configuration.currentEnvironment
 import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
+import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailScreenRoot
 import com.xorko.backlogmanager.game.presentation.gamelist.GameListScreenRoot
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+
+private const val DEFAULT_ANIMATION_DURATION = 300
+private val defaultEnterAnimation =
+    slideInHorizontally(
+        initialOffsetX = { fullWidth -> fullWidth },
+        animationSpec =
+            tween(
+                durationMillis = DEFAULT_ANIMATION_DURATION,
+                easing = FastOutSlowInEasing,
+            ),
+    )
+private val defaultPopExitAnimation =
+    slideOutHorizontally(
+        targetOffsetX = { fullWidth -> fullWidth },
+        animationSpec =
+            tween(
+                durationMillis = DEFAULT_ANIMATION_DURATION,
+                easing = FastOutSlowInEasing,
+            ),
+    )
 
 @Composable
 @Preview
@@ -49,7 +69,10 @@ fun App() {
             navigation<Route.GameGraph>(
                 startDestination = Route.GameList,
             ) {
-                composable<Route.GameList> {
+                composable<Route.GameList>(
+                    enterTransition = { EnterTransition.None },
+                    popExitTransition = { defaultPopExitAnimation },
+                ) {
                     GameListScreenRoot(
                         viewModel = koinViewModel(),
                         onGameClick = { game ->
@@ -57,15 +80,14 @@ fun App() {
                         },
                     )
                 }
-                composable<Route.GameDetail> { entry ->
-                    val args = entry.toRoute<Route.GameDetail>()
-
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text("Game ID: ${args.gameId}")
-                    }
+                composable<Route.GameDetail>(
+                    enterTransition = { defaultEnterAnimation },
+                    popExitTransition = { defaultPopExitAnimation },
+                ) { entry ->
+                    GameDetailScreenRoot(
+                        viewModel = koinViewModel(),
+                        onBackClicked = { navController.popBackStack() },
+                    )
                 }
             }
         }
