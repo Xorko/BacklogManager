@@ -1,15 +1,28 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import org.jetbrains.compose.internal.utils.localPropertiesFile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 import java.util.regex.Pattern
 
+// region Environment
 val flavorDimension = "env"
 val dev = "dev"
 val staging = "staging"
 val prod = "prod"
 val environments = setOf(dev, staging, prod)
-val androidTarget = "android"
-val iosTargets = listOf("iosX64", "iosArm64", "iosSimulatorArm64")
+// endregion
+
+// region Build config keys
 val apiBaseUrlKey = "API_BASE_URL"
+val supabaseUrlKey = "SUPABASE_URL"
+val supabaseKeyKey = "SUPABASE_KEY"
+// endregion
+
+// region Local properties key
+val localPropertiesApiBaseUrl = "api.baseUrl"
+val localPropertiesSupabaseUrlKey = "supabase.url"
+val localPropertiesSupabaseKeyKey = "supabase.key"
+// endregion
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -76,6 +89,8 @@ kotlin {
             implementation(libs.bundles.ktor.client)
             implementation(libs.bundles.coil)
             implementation(libs.bundles.arrow)
+            implementation(libs.bundles.supabase)
+            implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
@@ -182,51 +197,46 @@ project.extra.set("buildkonfig.flavor", currentBuildVariant())
 buildkonfig {
     packageName = "com.xorko.backlogmanager"
 
+    val localProperties = Properties()
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use {
+            localProperties.load(it)
+        }
+    }
+
     defaultConfigs {
         buildConfigField(STRING, flavorDimension, "none")
-        buildConfigField(STRING, apiBaseUrlKey, "")
+        buildConfigField(
+            STRING,
+            apiBaseUrlKey,
+            localProperties[localPropertiesApiBaseUrl] as? String
+                ?: error("Missing $localPropertiesApiBaseUrl in local.properties"),
+        )
+        buildConfigField(
+            STRING,
+            supabaseUrlKey,
+            localProperties[localPropertiesSupabaseUrlKey] as? String
+                ?: error("Missing $localPropertiesSupabaseUrlKey in local.properties"),
+        )
+        buildConfigField(
+            STRING,
+            supabaseKeyKey,
+            localProperties[localPropertiesSupabaseKeyKey] as? String
+                ?: error("Missing $localPropertiesSupabaseUrlKey in local.properties"),
+        )
     }
 
     defaultConfigs(dev) {
         buildConfigField(STRING, flavorDimension, dev)
-    }
-    targetConfigs(dev) {
-        create(androidTarget) {
-            buildConfigField(STRING, apiBaseUrlKey, "http://10.0.2.2")
-        }
-        iosTargets.forEach {
-            create(it) {
-                buildConfigField(STRING, apiBaseUrlKey, "http://127.0.0.1")
-            }
-        }
+        buildConfigField(STRING, supabaseKeyKey, "")
     }
 
     defaultConfigs(staging) {
         buildConfigField(STRING, flavorDimension, staging)
     }
-    targetConfigs(staging) {
-        create(androidTarget) {
-            buildConfigField(STRING, apiBaseUrlKey, "")
-        }
-        iosTargets.forEach {
-            create(it) {
-                buildConfigField(STRING, apiBaseUrlKey, "")
-            }
-        }
-    }
 
     defaultConfigs(prod) {
         buildConfigField(STRING, flavorDimension, prod)
-    }
-    targetConfigs(prod) {
-        create(androidTarget) {
-            buildConfigField(STRING, apiBaseUrlKey, "")
-        }
-        iosTargets.forEach {
-            create(it) {
-                buildConfigField(STRING, apiBaseUrlKey, "")
-            }
-        }
     }
 }
 

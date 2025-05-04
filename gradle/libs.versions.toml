@@ -1,7 +1,7 @@
 [versions]
 agp = "8.9.2"
 android-compileSdk = "35"
-android-minSdk = "24"
+android-minSdk = "26"
 android-targetSdk = "35"
 androidx-activityCompose = "1.10.1"
 androidx-appcompat = "1.7.0"
@@ -24,12 +24,13 @@ logback = "1.5.17"
 koin = "4.1.0-Beta7"
 coil = "3.1.0"
 arrow = "2.0.1"
-room = "2.7.0"
+room = "2.7.1"
 sqlite = "2.5.0"
 spotless = "7.0.3"
 ktlint-ruleset-compose = "0.4.22"
 buildkonfig = "0.17.0"
 kermit = "2.0.5"
+supabase = "3.1.4"
 
 [libraries]
 ktlint-ruleset-compose = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-ruleset-compose" }
@@ -80,6 +81,10 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
+supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt", version.ref = "supabase" }
+supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt", version.ref = "supabase" }
+supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt", version.ref = "supabase" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -126,4 +131,9 @@ arrow = [
     "arrow-core",
     "arrow-fx-coroutines",
     "arrow-optics"
+]
+supabase = [
+    "supabase-postgrest",
+    "supabase-auth",
+    "supabase-realtime",
 ]
