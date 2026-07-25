@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.BOOLEAN
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import org.jetbrains.compose.internal.utils.localPropertiesFile
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -26,7 +27,7 @@ val localPropertiesSupabaseKeyKey = "supabase.key"
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
@@ -41,14 +42,32 @@ kotlin {
         optIn.add("expect-actual-classes")
     }
 
-    androidTarget {
+    android {
+        namespace = "com.xorko.backlogmanager.compose"
+        compileSdk =
+            libs.versions.android.compileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.android.minSdk
+                .get()
+                .toInt()
+        androidResources {
+            enable = true
+        }
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
+        }
+
+        packaging {
+            resources {
+                excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            }
         }
     }
 
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
@@ -61,7 +80,7 @@ kotlin {
     sourceSets {
 
         androidMain.dependencies {
-            implementation(compose.preview)
+            implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.material)
@@ -75,12 +94,13 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.compose.components.resources)
+            implementation(libs.material.icons)
             implementation(libs.navigation)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
@@ -101,77 +121,17 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.xorko.backlogmanager"
-    compileSdk =
-        libs.versions.android.compileSdk
-            .get()
-            .toInt()
-
-    defaultConfig {
-        applicationId = "com.xorko.backlogmanager"
-        minSdk =
-            libs.versions.android.minSdk
-                .get()
-                .toInt()
-        targetSdk =
-            libs.versions.android.targetSdk
-                .get()
-                .toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
-    flavorDimensions += listOf(flavorDimension)
-
-    productFlavors {
-        create(dev) {
-            dimension = flavorDimension
-            isDefault = true
-            applicationIdSuffix = ".$dev"
-            resValue("string", "app_name", "[$dev] BacklogManager")
-        }
-        create(staging) {
-            dimension = flavorDimension
-            applicationIdSuffix = ".$staging"
-            resValue("string", "app_name", "[$staging] BacklogManager")
-        }
-        create(prod) {
-            dimension = flavorDimension
-        }
-    }
-}
-
 dependencies {
-    debugImplementation(compose.uiTooling)
+    androidRuntimeClasspath(libs.compose.uiToolingPreview)
 
     // Room
     add("kspAndroid", libs.room.compiler)
     add("kspIosSimulatorArm64", libs.room.compiler)
-    add("kspIosX64", libs.room.compiler)
     add("kspIosArm64", libs.room.compiler)
 
     // Arrow optics
     add("kspAndroid", libs.arrow.optics.kspPlugin)
     add("kspIosSimulatorArm64", libs.arrow.optics.kspPlugin)
-    add("kspIosX64", libs.arrow.optics.kspPlugin)
     add("kspIosArm64", libs.arrow.optics.kspPlugin)
 }
 
@@ -205,6 +165,7 @@ buildkonfig {
     }
 
     defaultConfigs {
+        buildConfigField(BOOLEAN, "IS_DEBUG", "false")
         buildConfigField(STRING, flavorDimension, "none")
         buildConfigField(
             STRING,
@@ -227,6 +188,7 @@ buildkonfig {
     }
 
     defaultConfigs(dev) {
+        buildConfigField(BOOLEAN, "IS_DEBUG", "true")
         buildConfigField(STRING, flavorDimension, dev)
         buildConfigField(STRING, supabaseKeyKey, "")
     }

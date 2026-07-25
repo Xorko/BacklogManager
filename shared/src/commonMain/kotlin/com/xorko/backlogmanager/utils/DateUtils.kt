@@ -1,10 +1,10 @@
 package com.xorko.backlogmanager.utils
 
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Instant
 
 /**
  * Convert a unix timestamp to a [LocalDate].

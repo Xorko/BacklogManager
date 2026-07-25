@@ -25,10 +25,7 @@ object IgdbQueryFactory {
     private val onlyGamesWhereClause =
         WhereClause.and(
             WhereClause.condition("version_parent = null"),
-            WhereClause.or(
-                WhereClause.condition("category = 0"), // Main Game
-                WhereClause.condition("category = 8"), // Expanded Game
-            ),
+            WhereClause.condition("game_type = (0,8)"),
         )
 
     fun searchGames(

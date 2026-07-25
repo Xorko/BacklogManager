@@ -20,7 +20,7 @@ fun IgdbGameDto.toGame() =
         genres = genres?.map { it.toGenre() } ?: emptyList(),
         initialReleaseDate = firstReleaseDate?.toLocalDate(),
         coverUrl = cover?.imageId?.toCoverUrl(),
-        artworksUrls = artworks?.mapNotNull { it.imageId.toCoverUrl() } ?: emptyList(),
+        artworksUrls = artworks?.map { it.imageId.toCoverUrl() } ?: emptyList(),
         developers = involvedCompanies?.mapNotNull { it.toDeveloperOrNull() } ?: emptyList(),
         publishers =
             involvedCompanies

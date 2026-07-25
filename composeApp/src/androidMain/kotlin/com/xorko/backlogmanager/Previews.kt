@@ -18,9 +18,7 @@ import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListScreen
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListState
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -28,6 +26,8 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlin.random.Random
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Preview
 @Composable
@@ -79,22 +79,24 @@ val backloggedGameList =
             )
 
         when (it % 3) {
-            0 ->
+            0 -> {
                 BackloggedGame.ToPlay(
                     id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = randomDateTimeBetween(),
                 )
+            }
 
-            1 ->
+            1 -> {
                 BackloggedGame.NowPlaying(
                     id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
                 )
+            }
 
-            else ->
+            else -> {
                 BackloggedGame.Finished(
                     id = it.toString(),
                     game = generateGame(it),
@@ -102,6 +104,7 @@ val backloggedGameList =
                     startedDate = startedDate,
                     finishedDate = finishedDate,
                 )
+            }
         }
     }
 
@@ -110,7 +113,7 @@ private fun generateGame(index: Int) =
         id = index.toLong(),
         name = "Game $index",
         description = "Description $index",
-        initialReleaseDate = LocalDate(year = 2015, monthNumber = 7, dayOfMonth = 15),
+        initialReleaseDate = LocalDate(year = 2015, month = 7, day = 15),
         developers = listOf(Developer(id = index.toLong(), name = "Developer $index")),
         publishers = listOf(Publisher(id = index.toLong(), name = "Publisher $index")),
         coverUrl = "https://picsum.photos/200/300",

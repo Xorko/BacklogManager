@@ -23,11 +23,11 @@ import kotlinx.serialization.json.Json
 import org.koin.ktor.plugin.Koin
 
 fun main() {
-    embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::module)
+    embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::main)
         .start(wait = true)
 }
 
-fun Application.module() {
+fun Application.main() {
     install(Koin) {
         modules(appModules)
     }

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class GameListViewModel(
     private val gameRepository: GameRepository,
@@ -51,9 +52,13 @@ class GameListViewModel(
             is GameListActions.OnGameClicked -> {
             }
 
-            is GameListActions.OnSearchQueryChange -> handleOnSearchQueryChange(action.query)
+            is GameListActions.OnSearchQueryChange -> {
+                handleOnSearchQueryChange(action.query)
+            }
 
-            is GameListActions.OnListEndAlmostReached -> handleOnListEndAlmostReached()
+            is GameListActions.OnListEndAlmostReached -> {
+                handleOnListEndAlmostReached()
+            }
         }
     }
 
@@ -62,7 +67,7 @@ class GameListViewModel(
         state
             .map { it.searchQuery }
             .distinctUntilChanged()
-            .debounce(500L)
+            .debounce(500.milliseconds)
             .onEach { query ->
                 Logger.d("New query: $query", tag = this::class.simpleName)
                 when {
