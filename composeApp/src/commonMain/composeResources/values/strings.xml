@@ -29,6 +29,16 @@
     <string name="backlogged_game_finished_on_format">Finished on %1$s</string>
     <string name="game_cover_artwork_description">Artwork of %1$s</string>
     <string name="game_details_screen_title">Game details</string>
+    <string name="register_screen_title">Register</string>
+    <string name="register_screen_email_label">Email</string>
+    <string name="register_screen_username_label">Username</string>
+    <string name="register_screen_password_label">Password</string>
+    <string name="register_screen_email_error_blank">The email field is blank</string>
+    <string name="register_screen_email_error_invalid_format">The email address is invalid</string>
+    <string name="register_screen_password_error_blank">The password field is blank</string>
+    <string name="register_screen_username_error_blank">The username field is blank</string>
+    <string name="register_screen_register_button_label">Register</string>
+    <string name="register_screen_already_have_account">Already have an account ?</string>
     <string name="add_to_backlog">Add to backlog</string>
     <string name="remove_from_backlog">Remove from backlog</string>
 </resources>
