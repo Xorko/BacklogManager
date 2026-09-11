@@ -77,6 +77,7 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
+    debugImplementation(libs.compose.uiTooling)
     debugImplementation(libs.compose.uiToolingPreview)
 
     implementation(libs.androidx.core.ktx)

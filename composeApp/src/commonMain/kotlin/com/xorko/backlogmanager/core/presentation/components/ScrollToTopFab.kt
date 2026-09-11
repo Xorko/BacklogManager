@@ -6,8 +6,10 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.scroll_to_top
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -25,3 +27,12 @@ fun ScrollToTopFab(
         )
     }
 }
+
+@Preview
+@Composable
+private fun ScrollToTopFabPreview() {
+    BacklogManagerTheme {
+        ScrollToTopFab()
+    }
+}
+

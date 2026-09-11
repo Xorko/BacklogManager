@@ -20,15 +20,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameFilterChips
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameList
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
 import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -103,12 +109,15 @@ fun BackloggedGameListScreen(
                         CircularProgressIndicator()
                     } else {
                         when {
-                            state.errorMessage != null ->
+                            state.errorMessage != null -> {
                                 ErrorMessage(message = state.errorMessage.asString())
+                            }
 
-                            state.searchResults.isEmpty() -> NoSearchResults()
+                            state.searchResults.isEmpty() -> {
+                                NoSearchResults()
+                            }
 
-                            else ->
+                            else -> {
                                 BackloggedGameList(
                                     backloggedGames = state.searchResults,
                                     onBackloggedGameClick = {
@@ -121,6 +130,7 @@ fun BackloggedGameListScreen(
                                     scrollState = backloggedGamesLazyListState,
                                     modifier = Modifier.align(Alignment.TopStart),
                                 )
+                            }
                         }
                     }
                 }
@@ -128,3 +138,58 @@ fun BackloggedGameListScreen(
         }
     }
 }
+
+@Preview
+@Composable
+private fun BackloggedGameListPreview() {
+    BacklogManagerTheme {
+        BackloggedGameListScreen(
+            state =
+                BackloggedGameListState(
+                    searchResults = backloggedGameList,
+                ),
+        ) { }
+    }
+}
+
+private val backloggedGameList =
+    (1..10).map {
+        val backloggedDate = randomDateTimeBetween()
+        val startedDate =
+            randomDateTimeBetween(
+                start = backloggedDate.toInstant(TimeZone.currentSystemDefault()),
+            )
+        val finishedDate =
+            randomDateTimeBetween(
+                start = startedDate.toInstant(TimeZone.currentSystemDefault()),
+            )
+
+        when (it % 3) {
+            0 -> {
+                BackloggedGame.ToPlay(
+                    id = it.toString(),
+                    game = generateGame(it),
+                    backloggedDate = randomDateTimeBetween(),
+                )
+            }
+
+            1 -> {
+                BackloggedGame.NowPlaying(
+                    id = it.toString(),
+                    game = generateGame(it),
+                    backloggedDate = backloggedDate,
+                    startedDate = startedDate,
+                )
+            }
+
+            else -> {
+                BackloggedGame.Finished(
+                    id = it.toString(),
+                    game = generateGame(it),
+                    backloggedDate = backloggedDate,
+                    startedDate = startedDate,
+                    finishedDate = finishedDate,
+                )
+            }
+        }
+    }

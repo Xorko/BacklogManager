@@ -80,6 +80,7 @@ kotlin {
     sourceSets {
 
         androidMain.dependencies {
+            implementation(libs.compose.uiTooling)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.appcompat)
@@ -122,6 +123,7 @@ kotlin {
 }
 
 dependencies {
+    androidRuntimeClasspath(libs.compose.uiTooling)
     androidRuntimeClasspath(libs.compose.uiToolingPreview)
 
     // Room
