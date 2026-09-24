@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.add_to_backlog
+import backlogmanager.composeapp.generated.resources.remove_from_backlog
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
@@ -23,6 +24,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun GameDetailsHeader(
     game: Game,
+    isInBacklog: Boolean,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -36,7 +38,7 @@ fun GameDetailsHeader(
         Text(
             text = "${
                 game.genres.joinToString(", ") { it.name }
-            } • ${game.platforms[0].name} • ${game.initialReleaseDate?.year}",
+            } • ${game.platforms.firstOrNull()?.name ?: ""} • ${game.initialReleaseDate?.year ?: ""}",
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
             modifier = Modifier.padding(horizontal = 16.dp),
         )
@@ -48,7 +50,14 @@ fun GameDetailsHeader(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
         ) {
-            Text(text = stringResource(Res.string.add_to_backlog))
+            Text(
+                text =
+                    if (isInBacklog) {
+                        stringResource(Res.string.remove_from_backlog)
+                    } else {
+                        stringResource(Res.string.add_to_backlog)
+                    },
+            )
         }
     }
 }

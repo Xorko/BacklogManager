@@ -18,7 +18,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +37,6 @@ import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
 import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
 import com.xorko.backlogmanager.game.presentation.gamelist.components.GameList
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
@@ -65,31 +67,35 @@ fun GameListScreen(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val coroutineScope = rememberCoroutineScope()
-
     val gameListState = rememberLazyListState()
+    var isFabVisible by remember { mutableStateOf(false) }
 
     // Scroll to top when search results are displayed
     LaunchedEffect(state.searchResults) {
         if (state.searchQuery.isNotBlank()) {
-            snapshotFlow { gameListState.layoutInfo.totalItemsCount }
-                .filter { it > 0 }
-                .first()
+            snapshotFlow { gameListState.layoutInfo.totalItemsCount }.first { it > 0 }
 
             gameListState.animateScrollToItem(0)
         }
     }
 
     LaunchedEffect(Unit) {
+        snapshotFlow { gameListState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect { isFabVisible = it > 0 }
+    }
+
+    LaunchedEffect(Unit) {
         snapshotFlow { gameListState.shouldLoadMoreItems() }
             .distinctUntilChanged()
-            .collect { shouldLoadMore ->
+            .collect { _ ->
                 onAction(GameListActions.OnListEndAlmostReached)
             }
     }
 
     Scaffold(
         floatingActionButton = {
-            if (gameListState.firstVisibleItemIndex > 0) {
+            if (isFabVisible) {
                 ScrollToTopFab(
                     onClick = {
                         coroutineScope.launch {
@@ -138,7 +144,7 @@ fun GameListScreen(
                             CircularProgressIndicator()
                         } else {
                             when {
-                                state.errorMessage != null ->
+                                state.errorMessage != null -> {
                                     ErrorMessage(
                                         message = state.errorMessage.asString(),
                                         modifier =
@@ -146,10 +152,13 @@ fun GameListScreen(
                                                 Dimens.paddingMedium,
                                             ),
                                     )
+                                }
 
-                                state.searchResults.isEmpty() -> NoSearchResults()
+                                state.searchResults.isEmpty() -> {
+                                    NoSearchResults()
+                                }
 
-                                else ->
+                                else -> {
                                     GameList(
                                         games = state.searchResults,
                                         onGameClicked = {
@@ -163,6 +172,7 @@ fun GameListScreen(
                                         isLoadingMoreGames = state.isLoadingMoreGames,
                                         modifier = Modifier.align(Alignment.TopStart),
                                     )
+                                }
                             }
                         }
                     }

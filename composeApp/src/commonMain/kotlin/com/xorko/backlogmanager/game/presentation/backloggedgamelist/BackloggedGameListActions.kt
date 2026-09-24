@@ -15,4 +15,6 @@ sealed interface BackloggedGameListActions {
     data class OnFilterSelected(
         val index: KClass<out BackloggedGame>?,
     ) : BackloggedGameListActions
+
+    data object OnRefresh : BackloggedGameListActions
 }

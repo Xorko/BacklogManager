@@ -126,6 +126,7 @@ private fun GameDetailScreen(
                     else ->
                         GameDetails(
                             game = state.game,
+                            isInBacklog = state.isInBacklog,
                             onAction = onAction,
                         )
                 }
@@ -138,6 +139,7 @@ private fun GameDetailScreen(
 @Composable
 private fun GameDetails(
     game: Game,
+    isInBacklog: Boolean,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -186,6 +188,7 @@ private fun GameDetails(
             )
             GameDetailsSheet(
                 game = game,
+                isInBacklog = isInBacklog,
                 onAction = onAction,
                 modifier =
                     Modifier

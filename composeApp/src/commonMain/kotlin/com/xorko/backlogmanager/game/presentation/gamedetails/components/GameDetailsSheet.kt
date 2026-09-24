@@ -21,6 +21,7 @@ import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
 @Composable
 fun GameDetailsSheet(
     game: Game,
+    isInBacklog: Boolean,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -39,6 +40,7 @@ fun GameDetailsSheet(
         ) {
             GameDetailsHeader(
                 game = game,
+                isInBacklog = isInBacklog,
                 onAction = onAction,
                 modifier = Modifier.padding(top = Dimens.paddingMedium),
             )
