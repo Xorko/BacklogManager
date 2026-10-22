@@ -3,6 +3,8 @@ package com.xorko.backlogmanager.game.data.repositories
 import arrow.core.Either
 import com.xorko.backlogmanager.core.domain.DataError
 import com.xorko.backlogmanager.core.domain.logging.Logger
+import com.xorko.backlogmanager.game.data.dto.shared.SharedGameDto
+import com.xorko.backlogmanager.game.data.dto.shared.mappers.toSharedGameDto
 import com.xorko.backlogmanager.game.data.local.LocalBacklogDataSource
 import com.xorko.backlogmanager.game.data.local.entities.SyncStatus
 import com.xorko.backlogmanager.game.data.local.entities.toBackloggedGame
@@ -10,6 +12,7 @@ import com.xorko.backlogmanager.game.data.local.entities.toDto
 import com.xorko.backlogmanager.game.data.local.entities.toEntity
 import com.xorko.backlogmanager.game.data.network.RemoteBacklogDataSource
 import com.xorko.backlogmanager.game.domain.BacklogRepository
+import com.xorko.backlogmanager.game.domain.GameRepository
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
 import io.github.jan.supabase.auth.Auth
@@ -18,12 +21,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.single
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.json.Json
 import kotlin.time.Clock
 
 class DefaultBacklogRepository(
     private val localDataSource: LocalBacklogDataSource,
     private val remoteDataSource: RemoteBacklogDataSource,
+    private val gameRepository: GameRepository,
     private val auth: Auth,
+    private val json: Json,
 ) : BacklogRepository {
     private val currentUserId: String?
         get() = auth.currentUserOrNull()?.id
@@ -166,8 +172,31 @@ class DefaultBacklogRepository(
             remoteDataSource.getBackloggedGames(userId).map { remoteDtos ->
                 remoteDtos.forEach { dto ->
                     val localEntity = localDataSource.getBackloggedGameById(dto.gameId).single()
-                    if (localEntity == null || localEntity.syncStatus == SyncStatus.SYNCED.name) {
-                        localDataSource.upsertBackloggedGame(dto.toEntity(syncStatus = SyncStatus.SYNCED))
+                    if (localEntity != null) {
+                        val updatedEntity =
+                            dto.toEntity(
+                                gameJson = localEntity.gameJson,
+                                syncStatus = SyncStatus.SYNCED,
+                            )
+                        localDataSource.upsertBackloggedGame(updatedEntity)
+                    } else {
+                        gameRepository.getGameById(dto.gameId).fold(
+                            ifLeft = { error ->
+                                Logger.w("Failed to fetch game details for remote game ${dto.gameId}: $error", tag = this::class.simpleName)
+                            },
+                            ifRight = { game ->
+                                if (game != null) {
+                                    val gameDto = game.toSharedGameDto()
+                                    val gameJsonString = json.encodeToString(SharedGameDto.serializer(), gameDto)
+                                    val newEntity =
+                                        dto.toEntity(
+                                            gameJson = gameJsonString,
+                                            syncStatus = SyncStatus.SYNCED,
+                                        )
+                                    localDataSource.upsertBackloggedGame(newEntity)
+                                }
+                            },
+                        )
                     }
                 }
             }

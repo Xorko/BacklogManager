@@ -21,7 +21,6 @@ enum class SyncStatus {
 const val STATUS_TO_PLAY = "TO_PLAY"
 const val STATUS_NOW_PLAYING = "NOW_PLAYING"
 const val STATUS_FINISHED = "FINISHED"
-
 const val STATUS_DROPPED = "DROPPED"
 
 @Entity(tableName = "backlogged_games")
@@ -185,11 +184,13 @@ fun BackloggedGameEntity.toDto(): BackloggedGameDto =
         finishedDate = finishedDate,
         droppedDate = droppedDate,
         resumedDate = resumedDate,
-        gameData = gameJson,
         updatedAt = lastModifiedAt,
     )
 
-fun BackloggedGameDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): BackloggedGameEntity =
+fun BackloggedGameDto.toEntity(
+    gameJson: String,
+    syncStatus: SyncStatus = SyncStatus.SYNCED,
+): BackloggedGameEntity =
     BackloggedGameEntity(
         gameId = gameId,
         status = status,
@@ -198,7 +199,7 @@ fun BackloggedGameDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): Back
         finishedDate = finishedDate,
         droppedDate = droppedDate,
         resumedDate = resumedDate,
-        gameJson = gameData ?: "",
+        gameJson = gameJson,
         syncStatus = syncStatus.name,
         userId = userId,
         lastModifiedAt = updatedAt ?: 0L,

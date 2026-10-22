@@ -15,6 +15,7 @@ import com.xorko.backlogmanager.game.domain.GameRepository
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.BackloggedGameListViewModel
 import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsViewModel
 import com.xorko.backlogmanager.game.presentation.gamelist.GameListViewModel
+import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -24,6 +25,7 @@ val gameModule =
     module {
         single<BacklogDatabase> { getBacklogDatabase(get()) }
         single { get<BacklogDatabase>().backloggedGameDao() }
+        single { Json { ignoreUnknownKeys = true } }
 
         singleOf(::RoomLocalBacklogDataSource).bind<LocalBacklogDataSource>()
         singleOf(::SupabaseRemoteBacklogDataSource).bind<RemoteBacklogDataSource>()

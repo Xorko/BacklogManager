@@ -25,11 +25,10 @@ expect object BacklogDatabaseConstructor : RoomDatabaseConstructor<BacklogDataba
     override fun initialize(): BacklogDatabase
 }
 
-fun getBacklogDatabase(
-    builder: RoomDatabase.Builder<BacklogDatabase>,
-): BacklogDatabase {
-    return builder
+fun getBacklogDatabase(builder: RoomDatabase.Builder<BacklogDatabase>): BacklogDatabase =
+    builder
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
+//         /!\ ONLY USE DURING DEV /!\
+//        .fallbackToDestructiveMigration(dropAllTables = true)
         .build()
-}
