@@ -1,11 +1,10 @@
 package com.xorko.backlogmanager.app
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-sealed interface Route {
-    @Serializable
-    data object GameGraph : Route
-
+@Serializable
+sealed interface Route : NavKey {
     @Serializable
     data object GameList : Route
 

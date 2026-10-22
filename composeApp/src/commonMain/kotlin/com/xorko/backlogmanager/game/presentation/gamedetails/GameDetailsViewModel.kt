@@ -1,6 +1,5 @@
 package com.xorko.backlogmanager.game.presentation.gamedetails
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import backlogmanager.composeapp.generated.resources.Res
@@ -20,9 +19,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class GameDetailsViewModel(
-    savedStateHandle: SavedStateHandle,
     private val gameRepository: GameRepository,
     private val backlogRepository: BacklogRepository,
+    gameId: Long? = null,
 ) : ViewModel() {
     companion object {
         const val GAME_ID = "gameId"
@@ -40,8 +39,6 @@ class GameDetailsViewModel(
     private var backlogObservationJob: Job? = null
 
     init {
-        val gameId = savedStateHandle.get<Long>(GAME_ID)
-
         gameId?.let { id ->
             observeBacklogState(id)
             fetchGameDetails(id)

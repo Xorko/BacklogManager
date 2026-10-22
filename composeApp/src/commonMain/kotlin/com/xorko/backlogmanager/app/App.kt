@@ -1,17 +1,17 @@
 package com.xorko.backlogmanager.app
 
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.request.crossfade
@@ -24,26 +24,9 @@ import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailScreenRoot
 import com.xorko.backlogmanager.game.presentation.gamelist.GameListScreenRoot
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 private const val DEFAULT_ANIMATION_DURATION = 300
-private val defaultEnterAnimation =
-    slideInHorizontally(
-        initialOffsetX = { fullWidth -> fullWidth },
-        animationSpec =
-            tween(
-                durationMillis = DEFAULT_ANIMATION_DURATION,
-                easing = FastOutSlowInEasing,
-            ),
-    )
-private val defaultPopExitAnimation =
-    slideOutHorizontally(
-        targetOffsetX = { fullWidth -> fullWidth },
-        animationSpec =
-            tween(
-                durationMillis = DEFAULT_ANIMATION_DURATION,
-                easing = FastOutSlowInEasing,
-            ),
-    )
 
 @Composable
 @Preview
@@ -61,35 +44,75 @@ fun App() {
     }
 
     BacklogManagerTheme {
-        val navController = rememberNavController()
-        NavHost(
-            navController = navController,
-            startDestination = Route.GameGraph,
-        ) {
-            navigation<Route.GameGraph>(
-                startDestination = Route.GameList,
-            ) {
-                composable<Route.GameList>(
-                    enterTransition = { EnterTransition.None },
-                    popExitTransition = { defaultPopExitAnimation },
-                ) {
-                    GameListScreenRoot(
-                        viewModel = koinViewModel(),
-                        onGameClick = { game ->
-                            navController.navigate(Route.GameDetail(game.id))
-                        },
-                    )
-                }
-                composable<Route.GameDetail>(
-                    enterTransition = { defaultEnterAnimation },
-                    popExitTransition = { defaultPopExitAnimation },
-                ) { entry ->
-                    GameDetailScreenRoot(
-                        viewModel = koinViewModel(),
-                        onBackClicked = { navController.popBackStack() },
-                    )
+        val navigationState =
+            rememberNavigationState(
+                startRoute = Route.GameList,
+                topLevelRoutes = setOf(Route.GameList),
+            )
+        val navigator = remember(navigationState) { Navigator(navigationState) }
+
+        val entryProvider =
+            remember(navigator) {
+                entryProvider<NavKey> {
+                    entry<Route.GameList> {
+                        GameListScreenRoot(
+                            viewModel = koinViewModel(),
+                            onGameClick = { game ->
+                                navigator.navigate(Route.GameDetail(game.id))
+                            },
+                        )
+                    }
+                    entry<Route.GameDetail> { key ->
+                        GameDetailScreenRoot(
+                            viewModel =
+                                koinViewModel {
+                                    parametersOf(key.gameId)
+                                },
+                            onBackClicked = { navigator.goBack() },
+                        )
+                    }
                 }
             }
-        }
+
+        NavDisplay(
+            entries = navigationState.toEntries(entryProvider),
+            onBack = { navigator.goBack() },
+            transitionSpec = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec =
+                        tween(
+                            durationMillis = DEFAULT_ANIMATION_DURATION,
+                            easing = FastOutSlowInEasing,
+                        ),
+                ) togetherWith
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> -fullWidth },
+                        animationSpec =
+                            tween(
+                                durationMillis = DEFAULT_ANIMATION_DURATION,
+                                easing = FastOutSlowInEasing,
+                            ),
+                    )
+            },
+            popTransitionSpec = {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth },
+                    animationSpec =
+                        tween(
+                            durationMillis = DEFAULT_ANIMATION_DURATION,
+                            easing = FastOutSlowInEasing,
+                        ),
+                ) togetherWith
+                    slideOutHorizontally(
+                        targetOffsetX = { fullWidth -> fullWidth },
+                        animationSpec =
+                            tween(
+                                durationMillis = DEFAULT_ANIMATION_DURATION,
+                                easing = FastOutSlowInEasing,
+                            ),
+                    )
+            },
+        )
     }
 }
