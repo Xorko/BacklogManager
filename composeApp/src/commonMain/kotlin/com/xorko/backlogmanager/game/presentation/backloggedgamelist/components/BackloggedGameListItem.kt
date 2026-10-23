@@ -45,6 +45,10 @@ fun BackloggedGameListItem(
         modifier = modifier,
         shape = BacklogManagerShapes.medium,
         elevation = CardDefaults.cardElevation(Dimens.elevationSmall),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background,
+            ),
     ) {
         Row(
             modifier =
