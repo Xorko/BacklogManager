@@ -1,32 +1,23 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
-import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Playing
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import kotlin.reflect.KClass
 
 private val statuses =
-    listOf<KClass<out BackloggedGame>?>(
+    listOf(
         null,
         ToPlay::class,
-        NowPlaying::class,
+        Playing::class,
         Finished::class,
     )
 
@@ -36,35 +27,18 @@ fun BackloggedGameFilterChips(
     onStatusSelected: (KClass<out BackloggedGame>?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
-        modifier = modifier,
+    SingleChoiceSegmentedButtonRow(
+        modifier =
+        modifier,
     ) {
-        items(statuses) { status ->
-            FilterChip(
+        statuses.forEachIndexed { index, status ->
+            SegmentedButton(
                 selected = selectedStatus == status,
                 onClick = { onStatusSelected(status) },
-                label = {
-                    Text(
-                        text = status.getStatus().asString(),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                },
-                leadingIcon = {
-                    if (selectedStatus == status) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null,
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(50.dp),
-                colors =
-                    FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    ),
-            )
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = statuses.size),
+            ) {
+                Text(text = status.getStatus().asString())
+            }
         }
     }
 }

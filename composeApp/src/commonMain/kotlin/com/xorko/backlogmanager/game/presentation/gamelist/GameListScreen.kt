@@ -123,7 +123,10 @@ fun GameListScreen(
                 onImeSearch = {
                     keyboardController?.hide()
                 },
-                modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(Dimens.paddingMedium),
             )
             Spacer(modifier = Modifier.height(Dimens.spacingMedium))
             Surface(

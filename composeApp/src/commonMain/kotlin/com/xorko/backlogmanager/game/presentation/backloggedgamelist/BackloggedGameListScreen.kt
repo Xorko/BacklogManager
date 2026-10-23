@@ -127,11 +127,15 @@ fun BackloggedGameListScreen(
                 onImeSearch = {
                     keyboardController?.hide()
                 },
-                modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.paddingMedium),
             )
             BackloggedGameFilterChips(
                 selectedStatus = state.selectedFilter,
                 onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = Dimens.paddingMedium),
             )
             Spacer(modifier = Modifier.height(Dimens.spacingMedium))
             Surface(
@@ -218,7 +222,7 @@ private val backloggedGameList =
             }
 
             1 -> {
-                BackloggedGame.NowPlaying(
+                BackloggedGame.Playing(
                     id = it.toString(),
                     game = generateGame(it),
                     backloggedDate = backloggedDate,
