@@ -9,7 +9,10 @@
     <string name="error_game_not_found">Couldn't retrieve data for this game</string>
     <string name="search_hint">Search...</string>
     <string name="clear_search">Clear search</string>
-    <string name="scroll_to_top">Scroll to top</string>"
+    <string name="go_back">Go back</string>
+    <string name="scroll_to_top">Scroll to top</string>
+    <string name="navigation_games">Games</string>
+    <string name="navigation_backlog">Backlog</string>
     <string name="no_search_results">No luck this time. Maybe try another title?</string>
     <string name="no_filter_result_to_play">Nothing in your backlog? Let’s fix that</string>
     <string name="no_filter_result_now_playing">You’ve got a whole backlog waiting. Pick one and dive in!</string>
@@ -29,5 +32,4 @@
     <string name="remove_from_backlog">Remove from backlog</string>
     <string name="remove_from_backlog_success">Removed from backlog</string>
     <string name="remove_from_backlog_failed">Failed to remove from backlog</string>
-    <string name="go_back">Go back</string>
 </resources>

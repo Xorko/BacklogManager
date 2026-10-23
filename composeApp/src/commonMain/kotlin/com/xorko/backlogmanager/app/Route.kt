@@ -9,6 +9,9 @@ sealed interface Route : NavKey {
     data object GameList : Route
 
     @Serializable
+    data object BackloggedGameList : Route
+
+    @Serializable
     data class GameDetail(
         val gameId: Long,
     ) : Route
