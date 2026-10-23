@@ -1,5 +1,6 @@
 package com.xorko.backlogmanager.game.presentation.gamedetails.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -25,7 +26,7 @@ fun BacklogStatusSelector(
 ) {
     val statuses = listOf(ToPlay::class, NowPlaying::class, Finished::class)
     SingleChoiceSegmentedButtonRow(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
     ) {
         statuses.forEachIndexed { index, status ->
             SegmentedButton(

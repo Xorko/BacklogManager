@@ -43,7 +43,7 @@ fun GameDetailsHeader(
         if (isInBacklog) {
             BacklogStatusSelector(
                 selectedStatus = backloggedGame::class,
-                onStatusSelected = { }, // TODO: Add action
+                onStatusSelected = { onAction(GameDetailsActions.OnStatusSelected(it)) },
             )
         }
         Spacer(Modifier.size(Dimens.spacingMedium))

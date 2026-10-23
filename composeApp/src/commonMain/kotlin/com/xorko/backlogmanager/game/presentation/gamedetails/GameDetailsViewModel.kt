@@ -15,12 +15,15 @@ import com.xorko.backlogmanager.core.presentation.UiText
 import com.xorko.backlogmanager.core.presentation.toUiText
 import com.xorko.backlogmanager.game.domain.BacklogRepository
 import com.xorko.backlogmanager.game.domain.GameRepository
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.withStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 class GameDetailsViewModel(
     private val gameRepository: GameRepository,
@@ -67,7 +70,34 @@ class GameDetailsViewModel(
         when (action) {
             is GameDetailsActions.OnAddToBacklog -> addToBacklog()
             is GameDetailsActions.OnRemoveFromBacklog -> removeFromBacklog()
+            is GameDetailsActions.OnStatusSelected -> updateBacklogStatus(status = action.status)
             else -> Logger.d("Unhandled action")
+        }
+
+    private fun fetchGameDetails(id: Long): Job =
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            gameRepository.getGameById(id).fold(
+                ifLeft = { error ->
+                    Logger.e("Error fetching game details: $error")
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = error.toUiText(),
+                        )
+                    }
+                },
+                ifRight = { game ->
+                    Logger.d("Game details fetched: $game")
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            game = game,
+                            errorMessage = null,
+                        )
+                    }
+                },
+            )
         }
 
     private fun addToBacklog() {
@@ -120,29 +150,18 @@ class GameDetailsViewModel(
         }
     }
 
-    private fun fetchGameDetails(id: Long): Job =
+    private fun updateBacklogStatus(status: KClass<out BackloggedGame>) {
+        val backloggedGame = _state.value.backloggedGame ?: return
+
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            gameRepository.getGameById(id).fold(
-                ifLeft = { error ->
-                    Logger.e("Error fetching game details: $error")
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = error.toUiText(),
-                        )
-                    }
+            backlogRepository.updateBackloggedGameStatus(backloggedGame.withStatus(status)).fold(
+                ifLeft = {
+                    Logger.d("Failed to update backlog status")
                 },
-                ifRight = { game ->
-                    Logger.d("Game details fetched: $game")
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            game = game,
-                            errorMessage = null,
-                        )
-                    }
+                ifRight = {
+                    Logger.d("Backlog status updated")
                 },
             )
         }
+    }
 }
