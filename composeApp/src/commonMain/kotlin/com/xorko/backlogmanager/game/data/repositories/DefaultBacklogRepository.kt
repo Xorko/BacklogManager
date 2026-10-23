@@ -24,7 +24,6 @@ class DefaultBacklogRepository(
     private val remoteDataSource: RemoteBacklogDataSource,
     private val auth: Auth,
 ) : BacklogRepository {
-
     private val currentUserId: String?
         get() = auth.currentUserOrNull()?.id
 
@@ -33,11 +32,10 @@ class DefaultBacklogRepository(
             entities.mapNotNull { it.toBackloggedGame() }
         }
 
-    override fun isGameInBacklog(gameId: Long): Flow<Boolean> =
-        localDataSource.isGameInBacklog(gameId)
+    override fun isGameInBacklog(gameId: Long): Flow<Boolean> = localDataSource.isGameInBacklog(gameId)
 
-    override suspend fun addToBacklog(game: Game): Either<DataError, Unit> {
-        return try {
+    override suspend fun addToBacklog(game: Game): Either<DataError, Unit> =
+        try {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             val userId = currentUserId
             val backloggedGame =
@@ -71,10 +69,9 @@ class DefaultBacklogRepository(
             Logger.e("Error adding game to backlog: ${e.message}", tag = this::class.simpleName)
             Either.Left(DataError.Local.UNKNOWN)
         }
-    }
 
-    override suspend fun removeFromBacklog(gameId: Long): Either<DataError, Unit> {
-        return try {
+    override suspend fun removeFromBacklog(gameId: Long): Either<DataError, Unit> =
+        try {
             val userId = currentUserId
             localDataSource.deleteBackloggedGame(gameId)
             Logger.d("Removed game $gameId from backlog locally", tag = this::class.simpleName)
@@ -95,12 +92,9 @@ class DefaultBacklogRepository(
             Logger.e("Error removing game from backlog: ${e.message}", tag = this::class.simpleName)
             Either.Left(DataError.Local.UNKNOWN)
         }
-    }
 
-    override suspend fun updateBackloggedGameStatus(
-        backloggedGame: BackloggedGame,
-    ): Either<DataError, Unit> {
-        return try {
+    override suspend fun updateBackloggedGameStatus(backloggedGame: BackloggedGame): Either<DataError, Unit> =
+        try {
             val userId = currentUserId
             val entity =
                 backloggedGame.toEntity(
@@ -127,7 +121,6 @@ class DefaultBacklogRepository(
             Logger.e("Error updating backlogged game status: ${e.message}", tag = this::class.simpleName)
             Either.Left(DataError.Local.UNKNOWN)
         }
-    }
 
     override suspend fun sync(): Either<DataError, Unit> {
         val userId =

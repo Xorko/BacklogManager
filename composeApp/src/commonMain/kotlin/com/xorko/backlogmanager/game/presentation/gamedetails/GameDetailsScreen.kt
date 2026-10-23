@@ -16,8 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,7 +37,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.error_game_not_found
 import backlogmanager.composeapp.generated.resources.game_details_screen_title
-import com.xorko.backlogmanager.core.presentation.hooks.ObserveSnackbarEvents
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.gamedetails.components.GameDetailsCarousel
@@ -70,12 +67,6 @@ private fun GameDetailScreen(
     state: GameDetailsState,
     onAction: (GameDetailsActions) -> Unit,
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    ObserveSnackbarEvents(
-        snackbarHostState = snackbarHostState,
-    )
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -97,45 +88,45 @@ private fun GameDetailScreen(
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
             )
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { innerPadding ->
+    ) {
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(innerPadding),
+                    .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center,
         ) {
             if (state.isLoading) {
                 CircularProgressIndicator()
             } else {
                 when {
-                    state.errorMessage != null ->
+                    state.errorMessage != null -> {
                         Text(
                             text = state.errorMessage.asString(),
                             color = MaterialTheme.colorScheme.onBackground,
                         )
+                    }
 
-                    state.game == null ->
+                    state.game == null -> {
                         Text(
                             text = stringResource(Res.string.error_game_not_found),
                             color = MaterialTheme.colorScheme.onBackground,
                         )
+                    }
 
-                    else ->
+                    else -> {
                         GameDetails(
                             game = state.game,
                             isInBacklog = state.isInBacklog,
                             onAction = onAction,
                         )
+                    }
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GameDetails(
     game: Game,
