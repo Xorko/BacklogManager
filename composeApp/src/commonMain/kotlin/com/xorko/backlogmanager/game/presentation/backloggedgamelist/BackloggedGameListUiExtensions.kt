@@ -48,11 +48,11 @@ private fun ToPlay.getLongStatus(): UiText =
 private fun NowPlaying.getLongStatus(): UiText =
     UiText.StringResourceId(
         Res.string.backlogged_game_started_on,
-        arrayOf(backloggedDate.toLongDateFormat()),
+        arrayOf(startedDate.toLongDateFormat()),
     )
 
 private fun Finished.getLongStatus(): UiText =
     UiText.StringResourceId(
         Res.string.backlogged_game_finished_on,
-        arrayOf(backloggedDate.toLongDateFormat()),
+        arrayOf(finishedDate.toLongDateFormat()),
     )
