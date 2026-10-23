@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -127,15 +126,18 @@ fun BackloggedGameListScreen(
                 onImeSearch = {
                     keyboardController?.hide()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.paddingMedium),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(Dimens.paddingMedium),
             )
             BackloggedGameFilterChips(
                 selectedStatus = state.selectedFilter,
                 onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = Dimens.paddingMedium),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.paddingMedium),
             )
             Spacer(modifier = Modifier.height(Dimens.spacingMedium))
             Surface(

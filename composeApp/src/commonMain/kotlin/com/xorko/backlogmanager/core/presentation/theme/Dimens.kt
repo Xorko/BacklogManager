@@ -22,4 +22,8 @@ object Dimens {
     val elevationSmall = 4.dp
     val elevationMedium = 8.dp
     val elevationLarge = 16.dp
+
+    val iconSmall = 16.dp
+    val iconMedium = 24.dp
+    val iconLarge = 32.dp
 }

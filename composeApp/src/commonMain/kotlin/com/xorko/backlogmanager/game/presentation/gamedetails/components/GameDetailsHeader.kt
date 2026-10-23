@@ -12,19 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
-import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
-import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
 
 @Composable
 fun GameDetailsHeader(
     game: Game,
-    backloggedGame: BackloggedGame?,
-    onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isInBacklog = backloggedGame != null
-
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = game.name,
@@ -39,18 +33,5 @@ fun GameDetailsHeader(
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
             modifier = Modifier.padding(horizontal = 16.dp),
         )
-        Spacer(Modifier.size(Dimens.spacingMedium))
-        if (isInBacklog) {
-            BacklogStatusSelector(
-                selectedStatus = backloggedGame::class,
-                onStatusSelected = { onAction(GameDetailsActions.OnStatusSelected(it)) },
-            )
-        }
-        Spacer(Modifier.size(Dimens.spacingMedium))
-        if (isInBacklog) {
-            RemoveFromBacklogButton(onClick = { onAction(GameDetailsActions.OnRemoveFromBacklog) })
-        } else {
-            AddToBacklogButton(onClick = { onAction(GameDetailsActions.OnAddToBacklog) })
-        }
     }
 }

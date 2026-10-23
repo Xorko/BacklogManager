@@ -6,30 +6,35 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.reflect.KClass
 import kotlin.time.Clock
 
-sealed class BackloggedGame {
-    abstract val id: String
-    abstract val game: Game
+sealed interface BackloggedGame {
+    val id: String
+    val game: Game
+    val backloggedDate: LocalDateTime
+
+    sealed interface Started : BackloggedGame {
+        val startedDate: LocalDateTime
+    }
 
     data class ToPlay(
         override val id: String,
         override val game: Game,
-        val backloggedDate: LocalDateTime,
-    ) : BackloggedGame()
+        override val backloggedDate: LocalDateTime,
+    ) : BackloggedGame
 
     data class Playing(
         override val id: String,
         override val game: Game,
-        val backloggedDate: LocalDateTime,
-        val startedDate: LocalDateTime,
-    ) : BackloggedGame()
+        override val backloggedDate: LocalDateTime,
+        override val startedDate: LocalDateTime,
+    ) : Started
 
     data class Finished(
         override val id: String,
         override val game: Game,
-        val backloggedDate: LocalDateTime,
-        val startedDate: LocalDateTime,
+        override val backloggedDate: LocalDateTime,
+        override val startedDate: LocalDateTime,
         val finishedDate: LocalDateTime,
-    ) : BackloggedGame()
+    ) : Started
 }
 
 fun BackloggedGame.withStatus(status: KClass<out BackloggedGame>) =

@@ -1,9 +1,9 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist
 
 import backlogmanager.composeapp.generated.resources.Res
-import backlogmanager.composeapp.generated.resources.backlogged_game_added_on
-import backlogmanager.composeapp.generated.resources.backlogged_game_finished_on
-import backlogmanager.composeapp.generated.resources.backlogged_game_started_on
+import backlogmanager.composeapp.generated.resources.backlogged_game_added_on_format
+import backlogmanager.composeapp.generated.resources.backlogged_game_finished_on_format
+import backlogmanager.composeapp.generated.resources.backlogged_game_started_on_format
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_all
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_finished
 import backlogmanager.composeapp.generated.resources.backlogged_game_status_playing
@@ -41,18 +41,18 @@ fun BackloggedGame.getLongStatus(): UiText =
 
 private fun ToPlay.getLongStatus(): UiText =
     UiText.StringResourceId(
-        Res.string.backlogged_game_added_on,
+        Res.string.backlogged_game_added_on_format,
         arrayOf(backloggedDate.toLongDateFormat()),
     )
 
 private fun Playing.getLongStatus(): UiText =
     UiText.StringResourceId(
-        Res.string.backlogged_game_started_on,
+        Res.string.backlogged_game_started_on_format,
         arrayOf(startedDate.toLongDateFormat()),
     )
 
 private fun Finished.getLongStatus(): UiText =
     UiText.StringResourceId(
-        Res.string.backlogged_game_finished_on,
+        Res.string.backlogged_game_finished_on_format,
         arrayOf(finishedDate.toLongDateFormat()),
     )

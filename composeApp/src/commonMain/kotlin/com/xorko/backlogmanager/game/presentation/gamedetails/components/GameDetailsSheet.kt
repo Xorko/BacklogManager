@@ -41,9 +41,12 @@ fun GameDetailsSheet(
         ) {
             GameDetailsHeader(
                 game = game,
+                modifier = Modifier.padding(top = Dimens.paddingMedium),
+            )
+            Spacer(Modifier.size(Dimens.paddingMedium))
+            BacklogSection(
                 backloggedGame = backloggedGame,
                 onAction = onAction,
-                modifier = Modifier.padding(top = Dimens.paddingMedium),
             )
             Spacer(Modifier.size(Dimens.spacingLarge))
             Text(
