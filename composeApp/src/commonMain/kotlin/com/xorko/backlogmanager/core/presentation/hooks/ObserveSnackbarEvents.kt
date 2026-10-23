@@ -22,8 +22,8 @@ fun ObserveSnackbarEvents(
 
             val result =
                 snackbarHostState.showSnackbar(
-                    message = event.message,
-                    actionLabel = event.action?.name,
+                    message = event.message.asStringAsync(),
+                    actionLabel = event.action?.name?.asStringAsync(),
                     duration = event.duration,
                     withDismissAction = event.isDismissable,
                 )

@@ -24,5 +24,10 @@
     <string name="game_cover_artwork_description">Artwork of %1$s</string>
     <string name="game_details_screen_title">Game details</string>
     <string name="add_to_backlog">Add to backlog</string>
+    <string name="add_to_backlog_success">Added to backlog</string>
+    <string name="add_to_backlog_failed">Failed to add to backlog</string>
     <string name="remove_from_backlog">Remove from backlog</string>
+    <string name="remove_from_backlog_success">Removed from backlog</string>
+    <string name="remove_from_backlog_failed">Failed to remove from backlog</string>
+    <string name="go_back">Go back</string>
 </resources>

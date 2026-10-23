@@ -3,7 +3,11 @@ package com.xorko.backlogmanager.game.presentation.gamedetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.add_to_backlog_failed
+import backlogmanager.composeapp.generated.resources.add_to_backlog_success
 import backlogmanager.composeapp.generated.resources.error_unknown
+import backlogmanager.composeapp.generated.resources.remove_from_backlog_failed
+import backlogmanager.composeapp.generated.resources.remove_from_backlog_success
 import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.core.presentation.SnackbarController
 import com.xorko.backlogmanager.core.presentation.SnackbarEvent
@@ -23,10 +27,6 @@ class GameDetailsViewModel(
     private val backlogRepository: BacklogRepository,
     gameId: Long? = null,
 ) : ViewModel() {
-    companion object {
-        const val GAME_ID = "gameId"
-    }
-
     private val _state = MutableStateFlow(GameDetailsState())
     val state =
         _state
@@ -78,22 +78,38 @@ class GameDetailsViewModel(
                 backlogRepository.removeFromBacklog(currentGame.id).fold(
                     ifLeft = {
                         Logger.d("Failed to remove from backlog")
-                        SnackbarController.sendEvent(SnackbarEvent(message = "Failed to remove from backlog"))
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = UiText.StringResourceId(Res.string.remove_from_backlog_failed),
+                            ),
+                        )
                     },
                     ifRight = {
                         Logger.d("Game removed from backlog")
-                        SnackbarController.sendEvent(SnackbarEvent(message = "Removed from backlog"))
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = UiText.StringResourceId(Res.string.remove_from_backlog_success),
+                            ),
+                        )
                     },
                 )
             } else {
                 backlogRepository.addToBacklog(currentGame).fold(
                     ifLeft = {
                         Logger.d("Failed to add to backlog")
-                        SnackbarController.sendEvent(SnackbarEvent(message = "Failed to add to backlog"))
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = UiText.StringResourceId(Res.string.add_to_backlog_failed),
+                            ),
+                        )
                     },
                     ifRight = {
                         Logger.d("Game added to backlog")
-                        SnackbarController.sendEvent(SnackbarEvent(message = "Added to backlog"))
+                        SnackbarController.sendEvent(
+                            SnackbarEvent(
+                                message = UiText.StringResourceId(Res.string.add_to_backlog_success),
+                            ),
+                        )
                     },
                 )
             }

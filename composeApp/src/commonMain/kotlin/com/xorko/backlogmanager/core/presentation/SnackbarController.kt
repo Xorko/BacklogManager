@@ -5,14 +5,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
 data class SnackbarEvent(
-    val message: String,
+    val message: UiText,
     val duration: SnackbarDuration = SnackbarDuration.Long,
     val isDismissable: Boolean = true,
     val action: SnackbarAction? = null,
 )
 
 data class SnackbarAction(
-    val name: String,
+    val name: UiText,
     val action: suspend () -> Unit,
 )
 
