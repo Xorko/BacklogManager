@@ -13,10 +13,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -24,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
+import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
 import com.xorko.backlogmanager.core.presentation.generateGame
 import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
@@ -33,6 +40,9 @@ import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameList
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
 import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,75 +71,109 @@ fun BackloggedGameListScreen(
     state: BackloggedGameListState,
     onAction: (BackloggedGameListActions) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val backloggedGamesLazyListState = rememberLazyListState()
+    val backloggedGamesListState = rememberLazyListState()
+    var isFabVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(state.searchResults) {
-        backloggedGamesLazyListState.animateScrollToItem(0)
+        backloggedGamesListState.animateScrollToItem(0)
     }
 
-    Column(
+    // Scroll to top when search results are displayed
+    LaunchedEffect(state.searchResults) {
+        if (state.searchQuery.isNotBlank()) {
+            snapshotFlow { backloggedGamesListState.layoutInfo.totalItemsCount }.first { it > 0 }
+
+            backloggedGamesListState.animateScrollToItem(0)
+        }
+    }
+
+    LaunchedEffect(backloggedGamesListState) {
+        snapshotFlow { backloggedGamesListState.firstVisibleItemIndex }
+            .distinctUntilChanged()
+            .collect { isFabVisible = it > 0 }
+    }
+
+    Scaffold(
+        floatingActionButton = {
+            if (isFabVisible) {
+                ScrollToTopFab(
+                    onClick = {
+                        coroutineScope.launch {
+                            backloggedGamesListState.animateScrollToItem(0)
+                        }
+                    },
+                )
+            }
+        },
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        GameSearchBar(
-            searchQuery = state.searchQuery,
-            onSearchQueryChange = {
-                onAction(BackloggedGameListActions.OnSearchQueryChange(it))
-            },
-            onImeSearch = {
-                keyboardController?.hide()
-            },
-            modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
-        )
-        BackloggedGameFilterChips(
-            selectedStatus = state.selectedFilter,
-            onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
-        )
-        Spacer(modifier = Modifier.height(Dimens.spacingMedium))
-        Surface(
+        Column(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+            GameSearchBar(
+                searchQuery = state.searchQuery,
+                onSearchQueryChange = {
+                    onAction(BackloggedGameListActions.OnSearchQueryChange(it))
+                },
+                onImeSearch = {
+                    keyboardController?.hide()
+                },
+                modifier = Modifier.widthIn(max = 400.dp).padding(16.dp).fillMaxWidth(),
+            )
+            BackloggedGameFilterChips(
+                selectedStatus = state.selectedFilter,
+                onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
+            )
+            Spacer(modifier = Modifier.height(Dimens.spacingMedium))
+            Surface(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator()
-                    } else {
-                        when {
-                            state.errorMessage != null -> {
-                                ErrorMessage(message = state.errorMessage.asString())
-                            }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        if (state.isLoading) {
+                            CircularProgressIndicator()
+                        } else {
+                            when {
+                                state.errorMessage != null -> {
+                                    ErrorMessage(message = state.errorMessage.asString())
+                                }
 
-                            state.searchResults.isEmpty() -> {
-                                NoSearchResults()
-                            }
+                                state.searchResults.isEmpty() -> {
+                                    NoSearchResults()
+                                }
 
-                            else -> {
-                                BackloggedGameList(
-                                    backloggedGames = state.searchResults,
-                                    onBackloggedGameClick = {
-                                        onAction(
-                                            BackloggedGameListActions.OnBackloggedGameClicked(
-                                                it,
-                                            ),
-                                        )
-                                    },
-                                    scrollState = backloggedGamesLazyListState,
-                                    modifier = Modifier.align(Alignment.TopStart),
-                                )
+                                else -> {
+                                    BackloggedGameList(
+                                        backloggedGames = state.searchResults,
+                                        onBackloggedGameClick = {
+                                            onAction(
+                                                BackloggedGameListActions.OnBackloggedGameClicked(
+                                                    it,
+                                                ),
+                                            )
+                                        },
+                                        scrollState = backloggedGamesListState,
+                                        modifier = Modifier.align(Alignment.TopStart),
+                                    )
+                                }
                             }
                         }
                     }

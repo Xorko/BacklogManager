@@ -79,7 +79,7 @@ fun GameListScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(gameListState) {
         snapshotFlow { gameListState.firstVisibleItemIndex }
             .distinctUntilChanged()
             .collect { isFabVisible = it > 0 }
