@@ -5,10 +5,25 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
-private fun getFormatter() = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.getDefault())
+private fun getDateFormatter(formatStyle: FormatStyle) = DateTimeFormatter.ofLocalizedDate(formatStyle).withLocale(Locale.getDefault())
 
-actual fun LocalDateTime.toLongDateFormat(): String = getFormatter().format(this.toJavaLocalDateTime())
+private fun LocalDateTime.format(formatStyle: FormatStyle): String {
+    val formatter = getDateFormatter(formatStyle)
+    return formatter.format(toJavaLocalDateTime())
+}
 
-actual fun LocalDate.toLongDateFormat(): String = getFormatter().format(this.toJavaLocalDate())
+private fun LocalDate.format(formatStyle: FormatStyle): String {
+    val formatter = getDateFormatter(formatStyle)
+    return formatter.format(toJavaLocalDate())
+}
+
+actual fun LocalDateTime.toShortDateFormat(): String = format(FormatStyle.SHORT)
+
+actual fun LocalDateTime.toMediumDateFormat(): String = format(FormatStyle.MEDIUM)
+
+actual fun LocalDateTime.toLongDateFormat(): String = format(FormatStyle.LONG)
+
+actual fun LocalDate.toLongDateFormat(): String = format(FormatStyle.LONG)

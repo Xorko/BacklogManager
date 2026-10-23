@@ -1,7 +1,6 @@
 package com.xorko.backlogmanager.utils
 
 import kotlinx.cinterop.BetaInteropApi
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -10,22 +9,28 @@ import kotlinx.datetime.toInstant
 import platform.Foundation.NSDate
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSDateFormatterLongStyle
+import platform.Foundation.NSDateFormatterMediumStyle
+import platform.Foundation.NSDateFormatterShortStyle
 import platform.Foundation.NSLocale
 import platform.Foundation.create
 import platform.Foundation.currentLocale
 
 @OptIn(BetaInteropApi::class)
-private fun Instant.toLongDateFormat(): String {
+private fun kotlin.time.Instant.toDateFormat(dateStyle: ULong): String {
     val nsDate = NSDate.create(timeIntervalSince1970 = epochSeconds.toDouble())
     val formatter =
         NSDateFormatter().apply {
             locale = NSLocale.currentLocale()
-            dateStyle = NSDateFormatterLongStyle
+            this.dateStyle = dateStyle
         }
 
     return formatter.stringFromDate(nsDate)
 }
 
-actual fun LocalDateTime.toLongDateFormat() = toInstant(TimeZone.currentSystemDefault()).toLongDateFormat()
+actual fun LocalDateTime.toShortDateFormat() = toInstant(TimeZone.currentSystemDefault()).toDateFormat(NSDateFormatterShortStyle)
 
-actual fun LocalDate.toLongDateFormat() = atStartOfDayIn(TimeZone.currentSystemDefault()).toLongDateFormat()
+actual fun LocalDateTime.toMediumDateFormat() = toInstant(TimeZone.currentSystemDefault()).toDateFormat(NSDateFormatterMediumStyle)
+
+actual fun LocalDateTime.toLongDateFormat() = toInstant(TimeZone.currentSystemDefault()).toDateFormat(NSDateFormatterLongStyle)
+
+actual fun LocalDate.toLongDateFormat() = atStartOfDayIn(TimeZone.currentSystemDefault()).toDateFormat(NSDateFormatterLongStyle)

@@ -13,7 +13,9 @@ fun Long.toLocalDate(): LocalDate {
     val instant = Instant.fromEpochSeconds(this)
     return instant.toLocalDateTime(TimeZone.UTC).date
 }
+expect fun LocalDateTime.toShortDateFormat(): String
 
+expect fun LocalDateTime.toMediumDateFormat(): String
 expect fun LocalDateTime.toLongDateFormat(): String
 
 expect fun LocalDate.toLongDateFormat(): String
