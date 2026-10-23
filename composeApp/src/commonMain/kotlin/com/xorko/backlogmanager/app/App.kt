@@ -46,8 +46,8 @@ fun App() {
     BacklogManagerTheme {
         val navigationState =
             rememberNavigationState(
-                startRoute = Route.GameList,
-                topLevelRoutes = setOf(Route.GameList),
+                startKey = Route.GameList,
+                topLevelKeys = setOf(Route.GameList, Route.BackloggedGameList),
             )
         val navigator = remember(navigationState) { Navigator(navigationState) }
 
