@@ -21,6 +21,7 @@ import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 fun BackloggedGameList(
     backloggedGames: List<BackloggedGame>,
     onBackloggedGameClick: (BackloggedGame) -> Unit,
+    onBackloggedGameRemoved: (BackloggedGame) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: LazyListState = rememberLazyListState(),
 ) {
@@ -46,6 +47,7 @@ fun BackloggedGameList(
                             padding(top = Dimens.paddingMedium)
                         },
                 onClick = { onBackloggedGameClick(backloggedGame) },
+                onRemove = { onBackloggedGameRemoved(backloggedGame) },
             )
         }
     }

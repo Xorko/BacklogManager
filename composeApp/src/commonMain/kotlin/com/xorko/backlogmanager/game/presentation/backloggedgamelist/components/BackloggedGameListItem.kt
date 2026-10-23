@@ -1,30 +1,42 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerShapes
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.core.presentation.theme.PrimaryLight
 import com.xorko.backlogmanager.core.presentation.theme.Success
@@ -33,16 +45,47 @@ import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getLongStat
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
 import com.xorko.backlogmanager.game.presentation.components.Companies
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackloggedGameListItem(
+    backloggedGame: BackloggedGame,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    onRemove: () -> Unit,
+) {
+    val dismissState = rememberSwipeToDismissBoxState()
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = true,
+        backgroundContent = { SwipeToDismissBox() },
+        onDismiss = { dismissValue: SwipeToDismissBoxValue ->
+            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                onRemove()
+            }
+        },
+        modifier = modifier,
+    ) {
+        BackloggedGameCard(
+            backloggedGame = backloggedGame,
+            onClick = onClick,
+        )
+    }
+}
+
+@Composable
+private fun BackloggedGameCard(
     backloggedGame: BackloggedGame,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         shape = BacklogManagerShapes.medium,
         elevation = CardDefaults.cardElevation(Dimens.elevationSmall),
         colors =
@@ -150,3 +193,51 @@ private fun BackloggedGame.getChipColor(): Color =
         is BackloggedGame.Playing -> MaterialTheme.colorScheme.primary
         is BackloggedGame.Finished -> Success
     }
+
+@Composable
+private fun SwipeToDismissBox() {
+    val color = MaterialTheme.colorScheme.errorContainer
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(color, shape = BacklogManagerShapes.medium)
+                .padding(horizontal = Dimens.paddingMedium),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onErrorContainer,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun BackloggedGameListItemPreview() {
+    val backloggedDate = randomDateTimeBetween()
+    val startedDate =
+        randomDateTimeBetween(
+            start = backloggedDate.toInstant(TimeZone.currentSystemDefault()),
+        )
+    val finishedDate =
+        randomDateTimeBetween(
+            start = startedDate.toInstant(TimeZone.currentSystemDefault()),
+        )
+
+    BacklogManagerTheme {
+        BackloggedGameListItem(
+            backloggedGame =
+                BackloggedGame.Finished(
+                    id = "1",
+                    game = generateGame(1),
+                    backloggedDate = backloggedDate,
+                    startedDate = startedDate,
+                    finishedDate = finishedDate,
+                ),
+            onClick = {},
+            onRemove = {},
+        )
+    }
+}

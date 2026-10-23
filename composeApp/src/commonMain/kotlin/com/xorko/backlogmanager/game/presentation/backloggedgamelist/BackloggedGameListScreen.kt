@@ -180,6 +180,13 @@ fun BackloggedGameListScreen(
                                                 ),
                                             )
                                         },
+                                        onBackloggedGameRemoved = {
+                                            onAction(
+                                                BackloggedGameListActions.OnRemoveBackloggedGame(
+                                                    it,
+                                                ),
+                                            )
+                                        },
                                         scrollState = backloggedGamesListState,
                                         modifier = Modifier.align(Alignment.TopStart),
                                     )

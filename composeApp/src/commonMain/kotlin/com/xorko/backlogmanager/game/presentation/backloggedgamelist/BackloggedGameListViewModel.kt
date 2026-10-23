@@ -58,6 +58,10 @@ class BackloggedGameListViewModel(
             is BackloggedGameListActions.OnBackloggedGameClicked -> {
             }
 
+            is BackloggedGameListActions.OnRemoveBackloggedGame -> {
+                removeFromBacklog(action.game.game.id)
+            }
+
             is BackloggedGameListActions.OnFilterSelected -> {
                 _state.update {
                     it.copy(selectedFilter = action.index)
@@ -75,6 +79,19 @@ class BackloggedGameListViewModel(
             BackloggedGameListActions.OnRefresh -> {
                 syncBacklog()
             }
+        }
+    }
+
+    private fun removeFromBacklog(gameId: Long) {
+        viewModelScope.launch {
+            backlogRepository.removeFromBacklog(gameId).fold(
+                ifLeft = {
+                    Logger.d("Failed to remove from backlog")
+                },
+                ifRight = {
+                    Logger.d("Game removed from backlog")
+                },
+            )
         }
     }
 
