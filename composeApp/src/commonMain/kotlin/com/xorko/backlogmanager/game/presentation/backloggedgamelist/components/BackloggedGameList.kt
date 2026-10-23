@@ -1,6 +1,7 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -28,6 +29,7 @@ fun BackloggedGameList(
         state = scrollState,
         verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
         horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(bottom = Dimens.paddingMedium),
     ) {
         itemsIndexed(
             items = backloggedGames,
