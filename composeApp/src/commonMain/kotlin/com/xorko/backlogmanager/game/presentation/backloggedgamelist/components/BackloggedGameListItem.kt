@@ -147,6 +147,6 @@ fun StatusChip(
 private fun BackloggedGame.getChipColor(): Color =
     when (this) {
         is BackloggedGame.ToPlay -> PrimaryLight
-        is BackloggedGame.NowPlaying -> MaterialTheme.colorScheme.primary
+        is BackloggedGame.Playing -> MaterialTheme.colorScheme.primary
         is BackloggedGame.Finished -> Success
     }

@@ -7,9 +7,9 @@ import com.xorko.backlogmanager.game.data.dto.shared.mappers.toGame
 import com.xorko.backlogmanager.game.data.dto.shared.mappers.toSharedGameDto
 import com.xorko.backlogmanager.game.data.network.dto.BackloggedGameDto
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
-import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.json.Json
+import kotlin.time.Clock
 
 enum class SyncStatus {
     SYNCED,
@@ -45,7 +45,7 @@ fun BackloggedGame.toEntity(
     val nowMillis = Clock.System.now().toEpochMilliseconds()
 
     return when (this) {
-        is BackloggedGame.ToPlay ->
+        is BackloggedGame.ToPlay -> {
             BackloggedGameEntity(
                 gameId = game.id,
                 status = STATUS_TO_PLAY,
@@ -57,8 +57,9 @@ fun BackloggedGame.toEntity(
                 userId = userId,
                 lastModifiedAt = nowMillis,
             )
+        }
 
-        is BackloggedGame.NowPlaying ->
+        is BackloggedGame.Playing -> {
             BackloggedGameEntity(
                 gameId = game.id,
                 status = STATUS_NOW_PLAYING,
@@ -70,8 +71,9 @@ fun BackloggedGame.toEntity(
                 userId = userId,
                 lastModifiedAt = nowMillis,
             )
+        }
 
-        is BackloggedGame.Finished ->
+        is BackloggedGame.Finished -> {
             BackloggedGameEntity(
                 gameId = game.id,
                 status = STATUS_FINISHED,
@@ -83,34 +85,35 @@ fun BackloggedGame.toEntity(
                 userId = userId,
                 lastModifiedAt = nowMillis,
             )
+        }
     }
 }
 
-fun BackloggedGameEntity.toBackloggedGame(
-    json: Json = Json { ignoreUnknownKeys = true },
-): BackloggedGame? {
-    return try {
+fun BackloggedGameEntity.toBackloggedGame(json: Json = Json { ignoreUnknownKeys = true }): BackloggedGame? =
+    try {
         val dto = json.decodeFromString(SharedGameDto.serializer(), gameJson)
         val game = dto.toGame()
         val backloggedDateTime = LocalDateTime.parse(backloggedDate)
 
         when (status) {
-            STATUS_TO_PLAY ->
+            STATUS_TO_PLAY -> {
                 BackloggedGame.ToPlay(
                     id = gameId.toString(),
                     game = game,
                     backloggedDate = backloggedDateTime,
                 )
+            }
 
-            STATUS_NOW_PLAYING ->
-                BackloggedGame.NowPlaying(
+            STATUS_NOW_PLAYING -> {
+                BackloggedGame.Playing(
                     id = gameId.toString(),
                     game = game,
                     backloggedDate = backloggedDateTime,
                     startedDate = startedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
                 )
+            }
 
-            STATUS_FINISHED ->
+            STATUS_FINISHED -> {
                 BackloggedGame.Finished(
                     id = gameId.toString(),
                     game = game,
@@ -118,13 +121,15 @@ fun BackloggedGameEntity.toBackloggedGame(
                     startedDate = startedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
                     finishedDate = finishedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
                 )
+            }
 
-            else -> null
+            else -> {
+                null
+            }
         }
     } catch (_: Exception) {
         null
     }
-}
 
 fun BackloggedGameEntity.toDto(): BackloggedGameDto =
     BackloggedGameDto(
@@ -139,9 +144,7 @@ fun BackloggedGameEntity.toDto(): BackloggedGameDto =
         updatedAt = lastModifiedAt,
     )
 
-fun BackloggedGameDto.toEntity(
-    syncStatus: SyncStatus = SyncStatus.SYNCED,
-): BackloggedGameEntity =
+fun BackloggedGameDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): BackloggedGameEntity =
     BackloggedGameEntity(
         gameId = gameId,
         status = status,

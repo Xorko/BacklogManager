@@ -16,7 +16,7 @@ sealed class BackloggedGame {
         val backloggedDate: LocalDateTime,
     ) : BackloggedGame()
 
-    data class NowPlaying(
+    data class Playing(
         override val id: String,
         override val game: Game,
         val backloggedDate: LocalDateTime,
@@ -35,7 +35,7 @@ sealed class BackloggedGame {
 fun BackloggedGame.withStatus(status: KClass<out BackloggedGame>) =
     when (this) {
         is BackloggedGame.Finished -> withStatus(status)
-        is BackloggedGame.NowPlaying -> withStatus(status)
+        is BackloggedGame.Playing -> withStatus(status)
         is BackloggedGame.ToPlay -> withStatus(status)
     }
 
@@ -47,8 +47,8 @@ fun BackloggedGame.ToPlay.withStatus(status: KClass<out BackloggedGame>): Backlo
             this
         }
 
-        BackloggedGame.NowPlaying::class -> {
-            BackloggedGame.NowPlaying(
+        BackloggedGame.Playing::class -> {
+            BackloggedGame.Playing(
                 id = id,
                 game = game,
                 backloggedDate = backloggedDate,
@@ -72,7 +72,7 @@ fun BackloggedGame.ToPlay.withStatus(status: KClass<out BackloggedGame>): Backlo
     }
 }
 
-fun BackloggedGame.NowPlaying.withStatus(status: KClass<out BackloggedGame>): BackloggedGame {
+fun BackloggedGame.Playing.withStatus(status: KClass<out BackloggedGame>): BackloggedGame {
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
     return when (status) {
@@ -84,7 +84,7 @@ fun BackloggedGame.NowPlaying.withStatus(status: KClass<out BackloggedGame>): Ba
             )
         }
 
-        BackloggedGame.NowPlaying::class -> {
+        BackloggedGame.Playing::class -> {
             this
         }
 
@@ -114,8 +114,8 @@ fun BackloggedGame.Finished.withStatus(status: KClass<out BackloggedGame>) =
             )
         }
 
-        BackloggedGame.NowPlaying::class -> {
-            BackloggedGame.NowPlaying(
+        BackloggedGame.Playing::class -> {
+            BackloggedGame.Playing(
                 id = id,
                 game = game,
                 backloggedDate = backloggedDate,

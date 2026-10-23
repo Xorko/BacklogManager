@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
-import com.xorko.backlogmanager.game.domain.models.BackloggedGame.NowPlaying
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Playing
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import kotlin.reflect.KClass
@@ -24,7 +24,7 @@ fun BacklogStatusSelector(
     onStatusSelected: (KClass<out BackloggedGame>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val statuses = listOf(ToPlay::class, NowPlaying::class, Finished::class)
+    val statuses = listOf(ToPlay::class, Playing::class, Finished::class)
     SingleChoiceSegmentedButtonRow(
         modifier = modifier.fillMaxWidth(),
     ) {
