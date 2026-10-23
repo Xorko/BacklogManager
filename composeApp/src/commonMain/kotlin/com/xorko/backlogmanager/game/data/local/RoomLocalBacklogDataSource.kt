@@ -11,11 +11,9 @@ class RoomLocalBacklogDataSource(
 
     override fun isGameInBacklog(gameId: Long): Flow<Boolean> = dao.isGameInBacklog(gameId)
 
-    override suspend fun getBackloggedGameById(gameId: Long): BackloggedGameEntity? =
-        dao.getBackloggedGameById(gameId)
+    override fun getBackloggedGameById(gameId: Long): Flow<BackloggedGameEntity?> = dao.getBackloggedGameById(gameId)
 
-    override suspend fun upsertBackloggedGame(entity: BackloggedGameEntity) =
-        dao.upsertBackloggedGame(entity)
+    override suspend fun upsertBackloggedGame(entity: BackloggedGameEntity) = dao.upsertBackloggedGame(entity)
 
     override suspend fun deleteBackloggedGame(gameId: Long) = dao.deleteBackloggedGame(gameId)
 

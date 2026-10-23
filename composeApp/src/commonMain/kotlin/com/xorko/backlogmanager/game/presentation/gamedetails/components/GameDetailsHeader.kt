@@ -2,10 +2,8 @@ package com.xorko.backlogmanager.game.presentation.gamedetails.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,21 +11,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import backlogmanager.composeapp.generated.resources.Res
-import backlogmanager.composeapp.generated.resources.add_to_backlog
-import backlogmanager.composeapp.generated.resources.remove_from_backlog
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameDetailsHeader(
     game: Game,
-    isInBacklog: Boolean,
+    backloggedGame: BackloggedGame?,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isInBacklog = backloggedGame != null
+
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = game.name,
@@ -43,21 +40,17 @@ fun GameDetailsHeader(
             modifier = Modifier.padding(horizontal = 16.dp),
         )
         Spacer(Modifier.size(Dimens.spacingMedium))
-        Button(
-            onClick = { onAction(GameDetailsActions.OnAddToBacklog) },
-            modifier =
-                Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-        ) {
-            Text(
-                text =
-                    if (isInBacklog) {
-                        stringResource(Res.string.remove_from_backlog)
-                    } else {
-                        stringResource(Res.string.add_to_backlog)
-                    },
+        if (isInBacklog) {
+            BacklogStatusSelector(
+                selectedStatus = backloggedGame::class,
+                onStatusSelected = { }, // TODO: Add action
             )
+        }
+        Spacer(Modifier.size(Dimens.spacingMedium))
+        if (isInBacklog) {
+            RemoveFromBacklogButton(onClick = { onAction(GameDetailsActions.OnRemoveFromBacklog) })
+        } else {
+            AddToBacklogButton(onClick = { onAction(GameDetailsActions.OnAddToBacklog) })
         }
     }
 }

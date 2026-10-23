@@ -8,7 +8,7 @@ interface LocalBacklogDataSource {
 
     fun isGameInBacklog(gameId: Long): Flow<Boolean>
 
-    suspend fun getBackloggedGameById(gameId: Long): BackloggedGameEntity?
+    fun getBackloggedGameById(gameId: Long): Flow<BackloggedGameEntity?>
 
     suspend fun upsertBackloggedGame(entity: BackloggedGameEntity)
 

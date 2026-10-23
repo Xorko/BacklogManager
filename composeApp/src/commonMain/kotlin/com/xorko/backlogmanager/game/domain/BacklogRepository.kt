@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.Flow
 interface BacklogRepository {
     fun getBackloggedGames(): Flow<List<BackloggedGame>>
 
+    fun getBackloggedGameById(gameId: Long): Flow<BackloggedGame?>
+
     fun isGameInBacklog(gameId: Long): Flow<Boolean>
 
     suspend fun addToBacklog(game: Game): Either<DataError, Unit>

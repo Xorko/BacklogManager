@@ -14,8 +14,8 @@ interface BackloggedGameDao {
     @Query("SELECT EXISTS(SELECT 1 FROM backlogged_games WHERE gameId = :gameId AND syncStatus != 'PENDING_DELETE')")
     fun isGameInBacklog(gameId: Long): Flow<Boolean>
 
-    @Query("SELECT * FROM backlogged_games WHERE gameId = :gameId LIMIT 1")
-    suspend fun getBackloggedGameById(gameId: Long): BackloggedGameEntity?
+    @Query("SELECT * FROM backlogged_games WHERE gameId = :gameId AND syncStatus != 'PENDING_DELETE' LIMIT 1")
+    fun getBackloggedGameById(gameId: Long): Flow<BackloggedGameEntity?>
 
     @Upsert
     suspend fun upsertBackloggedGame(entity: BackloggedGameEntity)

@@ -15,6 +15,7 @@ import com.xorko.backlogmanager.game.domain.models.Game
 import io.github.jan.supabase.auth.Auth
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.single
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
@@ -30,6 +31,11 @@ class DefaultBacklogRepository(
     override fun getBackloggedGames(): Flow<List<BackloggedGame>> =
         localDataSource.getBackloggedGames().map { entities ->
             entities.mapNotNull { it.toBackloggedGame() }
+        }
+
+    override fun getBackloggedGameById(gameId: Long): Flow<BackloggedGame?> =
+        localDataSource.getBackloggedGameById(gameId).map { entity ->
+            entity?.toBackloggedGame()
         }
 
     override fun isGameInBacklog(gameId: Long): Flow<Boolean> = localDataSource.isGameInBacklog(gameId)
@@ -159,7 +165,7 @@ class DefaultBacklogRepository(
 
             remoteDataSource.getBackloggedGames(userId).map { remoteDtos ->
                 remoteDtos.forEach { dto ->
-                    val localEntity = localDataSource.getBackloggedGameById(dto.gameId)
+                    val localEntity = localDataSource.getBackloggedGameById(dto.gameId).single()
                     if (localEntity == null || localEntity.syncStatus == SyncStatus.SYNCED.name) {
                         localDataSource.upsertBackloggedGame(dto.toEntity(syncStatus = SyncStatus.SYNCED))
                     }

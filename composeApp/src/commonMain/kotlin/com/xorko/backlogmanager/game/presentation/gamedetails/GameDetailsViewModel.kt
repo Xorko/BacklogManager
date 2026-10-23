@@ -57,62 +57,66 @@ class GameDetailsViewModel(
         backlogObservationJob?.cancel()
         backlogObservationJob =
             viewModelScope.launch {
-                backlogRepository.isGameInBacklog(gameId).collect { inBacklog ->
-                    _state.update { it.copy(isInBacklog = inBacklog) }
+                backlogRepository.getBackloggedGameById(gameId).collect { backloggedGame ->
+                    _state.update { it.copy(backloggedGame = backloggedGame) }
                 }
             }
     }
 
     fun onAction(action: GameDetailsActions) =
         when (action) {
-            is GameDetailsActions.OnAddToBacklog -> toggleBacklog()
+            is GameDetailsActions.OnAddToBacklog -> addToBacklog()
+            is GameDetailsActions.OnRemoveFromBacklog -> removeFromBacklog()
             else -> Logger.d("Unhandled action")
         }
 
-    private fun toggleBacklog() {
+    private fun addToBacklog() {
         val currentGame = _state.value.game ?: return
-        val currentlyInBacklog = _state.value.isInBacklog
 
         viewModelScope.launch {
-            if (currentlyInBacklog) {
-                backlogRepository.removeFromBacklog(currentGame.id).fold(
-                    ifLeft = {
-                        Logger.d("Failed to remove from backlog")
-                        SnackbarController.sendEvent(
-                            SnackbarEvent(
-                                message = UiText.StringResourceId(Res.string.remove_from_backlog_failed),
-                            ),
-                        )
-                    },
-                    ifRight = {
-                        Logger.d("Game removed from backlog")
-                        SnackbarController.sendEvent(
-                            SnackbarEvent(
-                                message = UiText.StringResourceId(Res.string.remove_from_backlog_success),
-                            ),
-                        )
-                    },
-                )
-            } else {
-                backlogRepository.addToBacklog(currentGame).fold(
-                    ifLeft = {
-                        Logger.d("Failed to add to backlog")
-                        SnackbarController.sendEvent(
-                            SnackbarEvent(
-                                message = UiText.StringResourceId(Res.string.add_to_backlog_failed),
-                            ),
-                        )
-                    },
-                    ifRight = {
-                        Logger.d("Game added to backlog")
-                        SnackbarController.sendEvent(
-                            SnackbarEvent(
-                                message = UiText.StringResourceId(Res.string.add_to_backlog_success),
-                            ),
-                        )
-                    },
-                )
-            }
+            backlogRepository.addToBacklog(currentGame).fold(
+                ifLeft = {
+                    Logger.d("Failed to add to backlog")
+                    SnackbarController.sendEvent(
+                        SnackbarEvent(
+                            message = UiText.StringResourceId(Res.string.add_to_backlog_failed),
+                        ),
+                    )
+                },
+                ifRight = {
+                    Logger.d("Game added to backlog")
+                    SnackbarController.sendEvent(
+                        SnackbarEvent(
+                            message = UiText.StringResourceId(Res.string.add_to_backlog_success),
+                        ),
+                    )
+                },
+            )
+        }
+    }
+
+    private fun removeFromBacklog() {
+        val currentGame = _state.value.game ?: return
+
+        viewModelScope.launch {
+            backlogRepository.removeFromBacklog(currentGame.id).fold(
+                ifLeft = {
+                    Logger.d("Failed to remove from backlog")
+                    SnackbarController.sendEvent(
+                        SnackbarEvent(
+                            message = UiText.StringResourceId(Res.string.remove_from_backlog_failed),
+                        ),
+                    )
+                },
+                ifRight = {
+                    Logger.d("Game removed from backlog")
+                    SnackbarController.sendEvent(
+                        SnackbarEvent(
+                            message = UiText.StringResourceId(Res.string.remove_from_backlog_success),
+                        ),
+                    )
+                },
+            )
         }
     }
 

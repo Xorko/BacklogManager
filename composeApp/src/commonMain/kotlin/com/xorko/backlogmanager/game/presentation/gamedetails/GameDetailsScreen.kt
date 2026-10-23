@@ -38,6 +38,7 @@ import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.error_game_not_found
 import backlogmanager.composeapp.generated.resources.game_details_screen_title
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.gamedetails.components.GameDetailsCarousel
 import com.xorko.backlogmanager.game.presentation.gamedetails.components.GameDetailsSheet
@@ -117,7 +118,7 @@ private fun GameDetailScreen(
                     else -> {
                         GameDetails(
                             game = state.game,
-                            isInBacklog = state.isInBacklog,
+                            backloggedGame = state.backloggedGame,
                             onAction = onAction,
                         )
                     }
@@ -130,7 +131,7 @@ private fun GameDetailScreen(
 @Composable
 private fun GameDetails(
     game: Game,
-    isInBacklog: Boolean,
+    backloggedGame: BackloggedGame?,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -179,7 +180,7 @@ private fun GameDetails(
             )
             GameDetailsSheet(
                 game = game,
-                isInBacklog = isInBacklog,
+                backloggedGame = backloggedGame,
                 onAction = onAction,
                 modifier =
                     Modifier

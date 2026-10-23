@@ -15,13 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
 
 @Composable
 fun GameDetailsSheet(
     game: Game,
-    isInBacklog: Boolean,
+    backloggedGame: BackloggedGame?,
     onAction: (GameDetailsActions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,7 +41,7 @@ fun GameDetailsSheet(
         ) {
             GameDetailsHeader(
                 game = game,
-                isInBacklog = isInBacklog,
+                backloggedGame = backloggedGame,
                 onAction = onAction,
                 modifier = Modifier.padding(top = Dimens.paddingMedium),
             )
