@@ -39,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GameSearchBar(
+    hint: String,
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     onImeSearch: () -> Unit,
@@ -62,7 +63,7 @@ fun GameSearchBar(
                 ),
             placeholder = {
                 Text(
-                    text = stringResource(Res.string.search_hint),
+                    text = hint,
                 )
             },
             leadingIcon = {
@@ -120,12 +121,14 @@ private fun SearchBarPreview() {
             verticalArrangement = spacedBy(10.dp),
         ) {
             GameSearchBar(
+                hint = stringResource(Res.string.search_hint),
                 searchQuery = "",
                 onSearchQueryChange = {},
                 onImeSearch = {},
                 modifier = Modifier.fillMaxWidth(),
             )
             GameSearchBar(
+                hint = stringResource(Res.string.search_hint),
                 searchQuery = "Caves of Qud",
                 onSearchQueryChange = {},
                 onImeSearch = {},

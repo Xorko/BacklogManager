@@ -28,6 +28,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.backlog_search_hint
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
 import com.xorko.backlogmanager.core.presentation.generateGame
@@ -44,6 +46,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -119,6 +122,7 @@ fun BackloggedGameListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             GameSearchBar(
+                hint = stringResource(Res.string.backlog_search_hint),
                 searchQuery = state.searchQuery,
                 onSearchQueryChange = {
                     onAction(BackloggedGameListActions.OnSearchQueryChange(it))

@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.search_hint
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
 import com.xorko.backlogmanager.core.presentation.shouldLoadMoreItems
@@ -39,6 +41,7 @@ import com.xorko.backlogmanager.game.presentation.gamelist.components.GameList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -116,6 +119,7 @@ fun GameListScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             GameSearchBar(
+                hint = stringResource(Res.string.search_hint),
                 searchQuery = state.searchQuery,
                 onSearchQueryChange = {
                     onAction(GameListActions.OnSearchQueryChange(it))

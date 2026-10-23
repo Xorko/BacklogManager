@@ -8,6 +8,7 @@
     <string name="error_serialization">Couldn't parse data</string>
     <string name="error_game_not_found">Couldn't retrieve data for this game</string>
     <string name="search_hint">Search...</string>
+    <string name="backlog_search_hint">Search your backlog...</string>
     <string name="clear_search">Clear search</string>
     <string name="go_back">Go back</string>
     <string name="scroll_to_top">Scroll to top</string>
