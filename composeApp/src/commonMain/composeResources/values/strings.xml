@@ -38,4 +38,19 @@
     <string name="more_actions">More actions</string>
     <string name="less">Less</string>
     <string name="retry">Retry</string>
+    <string name="critics_rating">Critics rating</string>
+    <string name="users_rating">Users rating</string>
+
+    <plurals name="publishers">
+        <item quantity="one">Publisher</item>
+        <item quantity="other">Publishers</item>
+    </plurals>
+    <plurals name="developers">
+        <item quantity="one">Developer</item>
+        <item quantity="other">Developers</item>
+    </plurals>
+    <plurals name="reviews">
+        <item quantity="one">Review</item>
+        <item quantity="other">Reviews</item>
+    </plurals>
 </resources>

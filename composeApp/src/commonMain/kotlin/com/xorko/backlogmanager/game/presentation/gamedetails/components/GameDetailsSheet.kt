@@ -62,6 +62,7 @@ fun GameDetailsSheet(
             )
 
             Spacer(Modifier.size(Dimens.spacingLarge))
+            GameDetailsSection(game = game)
         }
     }
 }
