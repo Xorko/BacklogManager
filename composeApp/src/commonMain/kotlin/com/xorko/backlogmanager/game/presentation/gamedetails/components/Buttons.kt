@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -33,6 +34,7 @@ fun AddToBacklogButton(
 ) {
     Button(
         onClick = onClick,
+        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
         modifier =
             modifier
                 .padding(horizontal = 16.dp)
