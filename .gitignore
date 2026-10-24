@@ -19,3 +19,5 @@ captures
 
 run-server.*
 *.artifact.md
+release.keystore
+androidApp/production
