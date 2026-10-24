@@ -83,10 +83,6 @@ fun BackloggedGameListScreen(
     val backloggedGamesListState = rememberLazyListState()
     var isFabVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state.searchResults) {
-        backloggedGamesListState.animateScrollToItem(0)
-    }
-
     // Scroll to top when search results are displayed
     LaunchedEffect(state.searchResults) {
         if (state.searchQuery.isNotBlank()) {
