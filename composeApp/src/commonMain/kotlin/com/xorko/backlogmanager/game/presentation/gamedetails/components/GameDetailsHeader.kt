@@ -43,7 +43,7 @@ fun GameDetailsHeader(
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray),
             modifier = Modifier.padding(horizontal = 16.dp),
         )
-        Spacer(Modifier.size(Dimens.spacingSmall))
+        Spacer(Modifier.size(Dimens.spacingMedium))
         PlatformTags(
             platforms = remember(game.platforms) { game.platforms.toPlatformUi() },
         )
