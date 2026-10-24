@@ -12,10 +12,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.conditional
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 @Composable
 fun BackloggedGameList(
@@ -50,5 +56,63 @@ fun BackloggedGameList(
                 onRemove = { onBackloggedGameRemoved(backloggedGame) },
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    val backloggedGameList =
+        (1..10).map {
+            val backloggedDate = randomDateTimeBetween()
+            val startedDate =
+                randomDateTimeBetween(
+                    start = backloggedDate.toInstant(TimeZone.currentSystemDefault()),
+                )
+            val finishedDate =
+                randomDateTimeBetween(
+                    start = startedDate.toInstant(TimeZone.currentSystemDefault()),
+                )
+
+            when (it % 3) {
+                0 -> {
+                    BackloggedGame.ToPlay(
+                        id = it.toString(),
+                        game = generateGame(it),
+                        backloggedDate = randomDateTimeBetween(),
+                    )
+                }
+
+                1 -> {
+                    BackloggedGame.Playing(
+                        id = it.toString(),
+                        game = generateGame(it),
+                        backloggedDate = backloggedDate,
+                        startedDate = startedDate,
+                        droppedDate = null,
+                        resumedDate = null,
+                    )
+                }
+
+                else -> {
+                    BackloggedGame.Finished(
+                        id = it.toString(),
+                        game = generateGame(it),
+                        backloggedDate = backloggedDate,
+                        startedDate = startedDate,
+                        finishedDate = finishedDate,
+                        droppedDate = null,
+                        resumedDate = null,
+                    )
+                }
+            }
+        }
+
+    BacklogManagerTheme {
+        BackloggedGameList(
+            backloggedGames = backloggedGameList,
+            onBackloggedGameClick = {},
+            onBackloggedGameRemoved = {},
+        )
     }
 }

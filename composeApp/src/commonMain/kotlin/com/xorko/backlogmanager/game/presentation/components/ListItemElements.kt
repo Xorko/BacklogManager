@@ -1,11 +1,17 @@
 package com.xorko.backlogmanager.game.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
+import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Company
 import com.xorko.backlogmanager.game.domain.models.Game
 
@@ -37,4 +43,17 @@ fun Companies(
         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
         modifier = modifier,
     )
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    BacklogManagerTheme {
+        val game = generateGame(1)
+
+        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spacingSmall)) {
+            GameTitle(game = game)
+            Companies(companies = game.developers)
+        }
+    }
 }

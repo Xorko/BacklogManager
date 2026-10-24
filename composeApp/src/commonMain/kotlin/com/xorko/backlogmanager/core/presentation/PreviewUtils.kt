@@ -3,7 +3,9 @@ package com.xorko.backlogmanager.core.presentation
 import com.xorko.backlogmanager.game.domain.models.Company.Developer
 import com.xorko.backlogmanager.game.domain.models.Company.Publisher
 import com.xorko.backlogmanager.game.domain.models.Game
+import com.xorko.backlogmanager.game.domain.models.Genre
 import com.xorko.backlogmanager.game.domain.models.OnlineRating
+import com.xorko.backlogmanager.game.domain.models.Platform
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -33,9 +35,23 @@ internal fun generateGame(index: Int) =
                 value = Random.nextDouble(until = 5.0),
                 count = Random.nextInt(until = 6),
             ),
-        platforms = emptyList(),
+        genres = listOf(
+            Genre(
+                id = 1,
+                name = "Action",
+            ),
+            Genre(
+                id = 1,
+                name = "Adventure",
+            ),
+        ),
+        platforms = listOf(
+            Platform(
+                id = 1,
+                name = "PC",
+            )
+        ),
         artworksUrls = emptyList(),
-        genres = emptyList(),
     )
 
 internal fun randomDateTimeBetween(

@@ -13,7 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
@@ -59,5 +63,38 @@ fun GameDetailsSheet(
 
             Spacer(Modifier.size(Dimens.spacingLarge))
         }
+    }
+}
+
+@Preview
+@Composable
+private fun NotInBacklogPreview() {
+    BacklogManagerTheme {
+        GameDetailsSheet(
+            game = generateGame(1),
+            backloggedGame = null,
+            onStatusSelected = {},
+            onAddToBacklogPressed = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InBacklogPreview() {
+    BacklogManagerTheme {
+        val game = generateGame(1)
+        val backloggedGame = BackloggedGame.ToPlay(
+            id = "1",
+            game = game,
+            backloggedDate = randomDateTimeBetween(),
+        )
+
+        GameDetailsSheet(
+            game = game,
+            backloggedGame = backloggedGame,
+            onStatusSelected = {},
+            onAddToBacklogPressed = {},
+        )
     }
 }

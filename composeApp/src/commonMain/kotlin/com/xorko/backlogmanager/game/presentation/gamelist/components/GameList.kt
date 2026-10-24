@@ -13,8 +13,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.conditional
+import com.xorko.backlogmanager.core.presentation.generateGame
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 
@@ -63,5 +66,16 @@ fun GameList(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    BacklogManagerTheme {
+        GameList(
+            games = (0..10).map { generateGame(it) },
+            onGameClicked = {},
+        )
     }
 }

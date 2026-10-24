@@ -27,13 +27,16 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.search_hint
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
+import com.xorko.backlogmanager.core.presentation.generateGame
 import com.xorko.backlogmanager.core.presentation.shouldLoadMoreItems
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
@@ -197,5 +200,33 @@ fun GameListScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    BacklogManagerTheme {
+        GameListScreen(
+            state = GameListState(
+                searchResults = (0..10).map { generateGame(it) },
+                searchQuery = "Game",
+                isLoading = false,
+            ),
+            onAction = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoadingPreview() {
+    BacklogManagerTheme {
+        GameListScreen(
+            state = GameListState(
+                searchResults = emptyList(),
+            ),
+            onAction = {},
+        )
     }
 }

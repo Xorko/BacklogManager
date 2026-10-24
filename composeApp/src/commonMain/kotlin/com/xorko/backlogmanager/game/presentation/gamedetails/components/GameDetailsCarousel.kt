@@ -13,11 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.game_cover_artwork_description
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +53,7 @@ fun GameDetailsCarousel(
                     .data(images[index])
                     .size(imageWidthPx, imageHeightPx)
                     .build(),
-            contentDescription = "${game.name}'s artwork",
+            contentDescription = stringResource(Res.string.game_cover_artwork_description, game.name),
             modifier = Modifier.fillMaxSize().maskClip(MaterialTheme.shapes.extraLarge),
             contentScale =
                 if (game.coverUrl != null && index == 0) {

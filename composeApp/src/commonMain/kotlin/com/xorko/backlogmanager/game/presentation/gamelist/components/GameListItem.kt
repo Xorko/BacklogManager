@@ -19,7 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.xorko.backlogmanager.core.presentation.generateGame
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerShapes
+import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
@@ -101,6 +104,17 @@ private fun GameInfo(
             text = game.initialReleaseDate?.toLongDateFormat() ?: "",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    BacklogManagerTheme {
+        GameListItem(
+            game = generateGame(1),
+            onClick = {},
         )
     }
 }

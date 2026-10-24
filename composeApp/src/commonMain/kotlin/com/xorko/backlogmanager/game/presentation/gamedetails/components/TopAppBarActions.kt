@@ -1,6 +1,7 @@
 package com.xorko.backlogmanager.game.presentation.gamedetails.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.tooling.preview.Preview
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.backlogged_game_drop
 import backlogmanager.composeapp.generated.resources.backlogged_game_resume
@@ -40,35 +42,56 @@ fun BackloggedGameTopAppBarActions(
             Icon(Icons.Outlined.MoreVert, contentDescription = stringResource(Res.string.more_actions))
         }
         DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
-            when {
-                isPlaying -> {
-                    DropMenuItem(
-                        onClick = {
-                            isMenuOpen = false
-                            onDropGame()
-                        },
-                    )
-                }
-
-                isDropped -> {
-                    ResumeMenuItem(
-                        onClick = {
-                            isMenuOpen = false
-                            onResumeGame()
-                        },
-                    )
-                }
-            }
-            if (isPlaying || isDropped) {
-                HorizontalDivider()
-            }
-            RemoveFromBacklogMenuItem(
-                onClick = {
-                    isMenuOpen = false
-                    onRemoveFromBacklog()
-                },
+            GameDetailsDropdownMenuContent(
+                collapse = { isMenuOpen = false },
+                isPlaying = isPlaying,
+                isDropped = isDropped,
+                onDropGame = onDropGame,
+                onResumeGame = onResumeGame,
+                onRemoveFromBacklog = onRemoveFromBacklog,
             )
         }
+    }
+}
+
+@Composable
+private fun GameDetailsDropdownMenuContent(
+    collapse: () -> Unit,
+    isPlaying: Boolean,
+    isDropped: Boolean,
+    onDropGame: () -> Unit,
+    onResumeGame: () -> Unit,
+    onRemoveFromBacklog: () -> Unit,
+) {
+    Column {
+        when {
+            isPlaying -> {
+                DropMenuItem(
+                    onClick = {
+                        collapse()
+                        onDropGame()
+                    },
+                )
+            }
+
+            isDropped -> {
+                ResumeMenuItem(
+                    onClick = {
+                        collapse()
+                        onResumeGame()
+                    },
+                )
+            }
+        }
+        if (isPlaying || isDropped) {
+            HorizontalDivider()
+        }
+        RemoveFromBacklogMenuItem(
+            onClick = {
+                collapse()
+                onRemoveFromBacklog()
+            },
+        )
     }
 }
 
@@ -117,5 +140,18 @@ private fun RemoveFromBacklogMenuItem(onClick: () -> Unit) {
             )
         },
         onClick = onClick,
+    )
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    GameDetailsDropdownMenuContent(
+        collapse = {},
+        isPlaying = true,
+        isDropped = false,
+        onDropGame = {},
+        onResumeGame = {},
+        onRemoveFromBacklog = {},
     )
 }
