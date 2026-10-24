@@ -161,7 +161,7 @@ fun BackloggedGameEntity.toBackloggedGame(json: Json = Json { ignoreUnknownKeys 
                     game = game,
                     backloggedDate = backloggedDateTime,
                     startedDate = parseDate(startedDate) ?: backloggedDateTime,
-                    droppedDate = parseDate(droppedDate),
+                    droppedDate = parseDate(droppedDate) ?: backloggedDateTime,
                 )
             }
 

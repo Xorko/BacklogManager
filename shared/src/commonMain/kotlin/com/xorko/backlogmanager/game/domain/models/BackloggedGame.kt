@@ -52,7 +52,7 @@ sealed interface BackloggedGame {
         override val game: Game,
         override val backloggedDate: LocalDateTime,
         override val startedDate: LocalDateTime,
-        val droppedDate: LocalDateTime?,
+        val droppedDate: LocalDateTime,
     ) : Started
 }
 
