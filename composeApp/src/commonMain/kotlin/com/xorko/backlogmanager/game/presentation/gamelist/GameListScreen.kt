@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogmanager.composeapp.generated.resources.Res
+import backlogmanager.composeapp.generated.resources.no_search_results
 import backlogmanager.composeapp.generated.resources.search_hint
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
@@ -40,7 +41,7 @@ import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
-import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
+import com.xorko.backlogmanager.game.presentation.components.InformativeMessage
 import com.xorko.backlogmanager.game.presentation.gamelist.components.GameList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
@@ -176,7 +177,9 @@ fun GameListScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    NoSearchResults()
+                                    InformativeMessage(
+                                        message = stringResource(Res.string.no_search_results),
+                                    )
                                 }
                             }
 

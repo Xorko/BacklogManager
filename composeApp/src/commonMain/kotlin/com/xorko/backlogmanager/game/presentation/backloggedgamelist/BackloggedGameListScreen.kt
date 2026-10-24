@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.backlog_search_hint
+import backlogmanager.composeapp.generated.resources.empty_backlog
+import backlogmanager.composeapp.generated.resources.no_search_results
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
 import com.xorko.backlogmanager.core.presentation.generateGame
@@ -44,7 +44,7 @@ import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameList
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameStatusFilter
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
-import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
+import com.xorko.backlogmanager.game.presentation.components.InformativeMessage
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -171,14 +171,16 @@ fun BackloggedGameListScreen(
                                 }
                             }
 
+                            !state.searchQuery.isBlank() && state.searchResults.isEmpty() -> {
+                                InformativeMessage(
+                                    message = stringResource(Res.string.no_search_results),
+                                )
+                            }
+
                             state.searchResults.isEmpty() -> {
-                                Box(
-                                    modifier =
-                                        Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    NoSearchResults()
-                                }
+                                InformativeMessage(
+                                    message = stringResource(Res.string.empty_backlog),
+                                )
                             }
 
                             else -> {
