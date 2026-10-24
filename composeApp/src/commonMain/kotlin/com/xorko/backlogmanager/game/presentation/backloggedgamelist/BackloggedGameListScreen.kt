@@ -41,8 +41,8 @@ import com.xorko.backlogmanager.core.presentation.randomDateTimeBetween
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameFilterChips
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameList
+import com.xorko.backlogmanager.game.presentation.backloggedgamelist.components.BackloggedGameStatusFilter
 import com.xorko.backlogmanager.game.presentation.components.ErrorMessage
 import com.xorko.backlogmanager.game.presentation.components.NoSearchResults
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -263,6 +263,8 @@ private val backloggedGameList =
                     game = generateGame(it),
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
+                    droppedDate = null,
+                    resumedDate = null,
                 )
             }
 
@@ -273,6 +275,8 @@ private val backloggedGameList =
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
                     finishedDate = finishedDate,
+                    droppedDate = null,
+                    resumedDate = null,
                 )
             }
         }

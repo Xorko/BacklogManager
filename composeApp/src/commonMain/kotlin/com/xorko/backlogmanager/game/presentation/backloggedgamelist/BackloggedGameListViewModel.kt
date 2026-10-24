@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.xorko.backlogmanager.core.domain.logging.Logger
 import com.xorko.backlogmanager.game.domain.BacklogRepository
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 class BackloggedGameListViewModel(
     private val backlogRepository: BacklogRepository,
@@ -42,11 +44,17 @@ class BackloggedGameListViewModel(
                     filteredByQuery.filter { filter.isInstance(it) }
                 }
 
-            filteredByStatus
-        }.onEach { searchResults ->
+            val counts = filteredByQuery.groupingBy { it::class }.eachCount()
+
+            BacklogSnapshot(
+                searchResults = filteredByStatus,
+                statusCounts = counts,
+            )
+        }.onEach { snapshot ->
             _state.update {
                 it.copy(
-                    searchResults = searchResults,
+                    searchResults = snapshot.searchResults,
+                    statusCounts = snapshot.statusCounts,
                     isLoading = false,
                 )
             }
@@ -116,3 +124,14 @@ class BackloggedGameListViewModel(
         }
     }
 }
+
+/**
+ * Data holder for the combine result in [BackloggedGameListViewModel].
+ *
+ * @property searchResults - List of games that match the search query.
+ * @property statusCounts - Map of the number of games for each status.
+ */
+private data class BacklogSnapshot(
+    val searchResults: List<BackloggedGame>,
+    val statusCounts: Map<KClass<out BackloggedGame>, Int>,
+)
