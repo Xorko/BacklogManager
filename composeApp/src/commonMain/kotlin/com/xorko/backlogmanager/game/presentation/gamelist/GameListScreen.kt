@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -63,6 +64,7 @@ fun GameListScreenRoot(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GameListScreen(
     state: GameListState,
@@ -140,18 +142,22 @@ fun GameListScreen(
                         .fillMaxWidth(),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onAction(GameListActions.OnRefresh) },
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator()
-                        } else {
-                            when {
-                                state.errorMessage != null -> {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                        )
+                    } else {
+                        when {
+                            state.errorMessage != null -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
                                     ErrorMessage(
                                         message = state.errorMessage.asString(),
                                         modifier =
@@ -160,26 +166,31 @@ fun GameListScreen(
                                             ),
                                     )
                                 }
+                            }
 
-                                state.searchResults.isEmpty() -> {
+                            state.searchResults.isEmpty() -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
                                     NoSearchResults()
                                 }
+                            }
 
-                                else -> {
-                                    GameList(
-                                        games = state.searchResults,
-                                        onGameClicked = {
-                                            onAction(
-                                                GameListActions.OnGameClicked(
-                                                    it,
-                                                ),
-                                            )
-                                        },
-                                        scrollState = gameListState,
-                                        isLoadingMoreGames = state.isLoadingMoreGames,
-                                        modifier = Modifier.align(Alignment.TopStart),
-                                    )
-                                }
+                            else -> {
+                                GameList(
+                                    games = state.searchResults,
+                                    onGameClicked = {
+                                        onAction(
+                                            GameListActions.OnGameClicked(
+                                                it,
+                                            ),
+                                        )
+                                    },
+                                    scrollState = gameListState,
+                                    isLoadingMoreGames = state.isLoadingMoreGames,
+                                    modifier = Modifier.align(Alignment.TopStart),
+                                )
                             }
                         }
                     }

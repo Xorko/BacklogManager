@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,6 +72,7 @@ fun BackloggedGameListScreenRoot(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BackloggedGameListScreen(
     state: BackloggedGameListState,
@@ -135,9 +140,10 @@ fun BackloggedGameListScreen(
                         .fillMaxWidth()
                         .padding(Dimens.paddingMedium),
             )
-            BackloggedGameFilterChips(
+            BackloggedGameStatusFilter(
                 selectedStatus = state.selectedFilter,
                 onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
+                counts = state.statusCounts,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -151,46 +157,57 @@ fun BackloggedGameListScreen(
                         .fillMaxWidth(),
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                PullToRefreshBox(
+                    isRefreshing = state.isRefreshing,
+                    onRefresh = { onAction(BackloggedGameListActions.OnRefresh) },
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator()
-                        } else {
-                            when {
-                                state.errorMessage != null -> {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                        )
+                    } else {
+                        when {
+                            state.errorMessage != null -> {
+                                Box(
+                                    modifier =
+                                        Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
                                     ErrorMessage(message = state.errorMessage.asString())
                                 }
+                            }
 
-                                state.searchResults.isEmpty() -> {
+                            state.searchResults.isEmpty() -> {
+                                Box(
+                                    modifier =
+                                        Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center,
+                                ) {
                                     NoSearchResults()
                                 }
+                            }
 
-                                else -> {
-                                    BackloggedGameList(
-                                        backloggedGames = state.searchResults,
-                                        onBackloggedGameClick = {
-                                            onAction(
-                                                BackloggedGameListActions.OnBackloggedGameClicked(
-                                                    it,
-                                                ),
-                                            )
-                                        },
-                                        onBackloggedGameRemoved = {
-                                            onAction(
-                                                BackloggedGameListActions.OnRemoveBackloggedGame(
-                                                    it,
-                                                ),
-                                            )
-                                        },
-                                        scrollState = backloggedGamesListState,
-                                        modifier = Modifier.align(Alignment.TopStart),
-                                    )
-                                }
+                            else -> {
+                                BackloggedGameList(
+                                    backloggedGames = state.searchResults,
+                                    onBackloggedGameClick = {
+                                        onAction(
+                                            BackloggedGameListActions.OnBackloggedGameClicked(
+                                                it,
+                                            ),
+                                        )
+                                    },
+                                    onBackloggedGameRemoved = {
+                                        onAction(
+                                            BackloggedGameListActions.OnRemoveBackloggedGame(
+                                                it,
+                                            ),
+                                        )
+                                    },
+                                    scrollState = backloggedGamesListState,
+                                    modifier = Modifier.align(Alignment.TopStart),
+                                )
                             }
                         }
                     }
@@ -208,6 +225,12 @@ private fun BackloggedGameListPreview() {
             state =
                 BackloggedGameListState(
                     searchResults = backloggedGameList,
+                    statusCounts =
+                        mapOf(
+                            BackloggedGame.ToPlay::class to 1,
+                            BackloggedGame.Playing::class to 2,
+                            BackloggedGame.Finished::class to 3,
+                        ),
                 ),
         ) { }
     }

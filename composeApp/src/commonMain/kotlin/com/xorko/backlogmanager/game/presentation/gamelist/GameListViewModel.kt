@@ -59,6 +59,10 @@ class GameListViewModel(
             is GameListActions.OnListEndAlmostReached -> {
                 handleOnListEndAlmostReached()
             }
+
+            GameListActions.OnRefresh -> {
+                refreshGames()
+            }
         }
     }
 
@@ -110,9 +114,31 @@ class GameListViewModel(
             Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
         }
 
-    private fun searchGames(query: String): Job =
+    private fun refreshGames() {
+        if (state.value.isLoading || state.value.isRefreshing) return
+
+        fetchGamesJob?.cancel()
+        searchJob?.cancel()
+
+        val query = state.value.searchQuery
+        if (query.isNotBlank()) {
+            searchJob = searchGames(query, isRefresh = true)
+        } else {
+            currentOffset = 0
+            fetchGamesJob = fetchGames(isRefresh = true)
+        }
+    }
+
+    private fun searchGames(
+        query: String,
+        isRefresh: Boolean = false,
+    ): Job =
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = true) }
+            } else {
+                _state.update { it.copy(isLoading = true) }
+            }
             Logger.v("New state value: ${state.value}", tag = this::class.simpleName)
             gameRepository
                 .searchGames(query)
@@ -122,6 +148,7 @@ class GameListViewModel(
                         _state.update {
                             it.copy(
                                 isLoading = false,
+                                isRefreshing = false,
                                 errorMessage = error.toUiText(),
                             )
                         }
@@ -132,6 +159,7 @@ class GameListViewModel(
                         _state.update {
                             it.copy(
                                 isLoading = false,
+                                isRefreshing = false,
                                 searchResults = searchResults,
                                 errorMessage = null,
                             )
@@ -141,9 +169,13 @@ class GameListViewModel(
                 )
         }
 
-    private fun fetchGames(): Job =
+    private fun fetchGames(isRefresh: Boolean = false): Job =
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = true) }
+            } else {
+                _state.update { it.copy(isLoading = true) }
+            }
             gameRepository
                 .getGames()
                 .fold(
@@ -152,6 +184,7 @@ class GameListViewModel(
                         _state.update {
                             it.copy(
                                 isLoading = false,
+                                isRefreshing = false,
                                 errorMessage = error.toUiText(),
                             )
                         }
@@ -159,10 +192,12 @@ class GameListViewModel(
                     },
                     ifRight = { games ->
                         Logger.v("Fetched games: $games", tag = this::class.simpleName)
+                        currentOffset = games.size
                         cachedGames = games
                         _state.update {
                             it.copy(
                                 isLoading = false,
+                                isRefreshing = false,
                                 searchResults = games,
                                 errorMessage = null,
                             )

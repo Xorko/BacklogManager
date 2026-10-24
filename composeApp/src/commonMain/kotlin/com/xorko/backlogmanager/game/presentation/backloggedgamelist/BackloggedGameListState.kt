@@ -10,5 +10,6 @@ data class BackloggedGameListState(
     val searchResults: List<BackloggedGame> = emptyList(),
     val selectedFilter: KClass<out BackloggedGame>? = null,
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: UiText? = null,
 )

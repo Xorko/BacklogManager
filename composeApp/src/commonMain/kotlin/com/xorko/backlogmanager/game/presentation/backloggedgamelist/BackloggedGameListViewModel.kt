@@ -77,7 +77,7 @@ class BackloggedGameListViewModel(
             }
 
             BackloggedGameListActions.OnRefresh -> {
-                syncBacklog()
+                syncBacklog(isRefresh = true)
             }
         }
     }
@@ -95,9 +95,24 @@ class BackloggedGameListViewModel(
         }
     }
 
-    private fun syncBacklog() {
+    private fun syncBacklog(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            backlogRepository.sync()
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = true) }
+            }
+
+            backlogRepository.sync().fold(
+                ifLeft = { error ->
+                    Logger.e("Sync failed: $error", tag = this::class.simpleName)
+                },
+                ifRight = {
+                    Logger.d("Sync succeeded", tag = this::class.simpleName)
+                },
+            )
+
+            if (isRefresh) {
+                _state.update { it.copy(isRefreshing = false) }
+            }
         }
     }
 }
