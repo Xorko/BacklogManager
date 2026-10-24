@@ -17,13 +17,14 @@ import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
-import com.xorko.backlogmanager.game.presentation.gamedetails.GameDetailsActions
+import kotlin.reflect.KClass
 
 @Composable
 fun GameDetailsSheet(
     game: Game,
     backloggedGame: BackloggedGame?,
-    onAction: (GameDetailsActions) -> Unit,
+    onStatusSelected: (KClass<out BackloggedGame>) -> Unit,
+    onAddToBacklogPressed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -46,7 +47,8 @@ fun GameDetailsSheet(
             Spacer(Modifier.size(Dimens.paddingMedium))
             BacklogSection(
                 backloggedGame = backloggedGame,
-                onAction = onAction,
+                onStatusSelected = onStatusSelected,
+                onAddToBacklogPressed = onAddToBacklogPressed,
             )
             Spacer(Modifier.size(Dimens.spacingLarge))
             Text(

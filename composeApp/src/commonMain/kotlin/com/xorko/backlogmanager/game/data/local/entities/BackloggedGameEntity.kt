@@ -22,6 +22,8 @@ const val STATUS_TO_PLAY = "TO_PLAY"
 const val STATUS_NOW_PLAYING = "NOW_PLAYING"
 const val STATUS_FINISHED = "FINISHED"
 
+const val STATUS_DROPPED = "DROPPED"
+
 @Entity(tableName = "backlogged_games")
 data class BackloggedGameEntity(
     @PrimaryKey val gameId: Long,
@@ -29,6 +31,8 @@ data class BackloggedGameEntity(
     val backloggedDate: String,
     val startedDate: String? = null,
     val finishedDate: String? = null,
+    val droppedDate: String? = null,
+    val resumedDate: String? = null,
     val gameJson: String,
     val syncStatus: String = SyncStatus.PENDING_INSERT.name,
     val userId: String? = null,
@@ -52,6 +56,8 @@ fun BackloggedGame.toEntity(
                 backloggedDate = backloggedDate.toString(),
                 startedDate = null,
                 finishedDate = null,
+                droppedDate = null,
+                resumedDate = null,
                 gameJson = gameJsonString,
                 syncStatus = syncStatus.name,
                 userId = userId,
@@ -66,6 +72,24 @@ fun BackloggedGame.toEntity(
                 backloggedDate = backloggedDate.toString(),
                 startedDate = startedDate.toString(),
                 finishedDate = null,
+                droppedDate = droppedDate?.toString(),
+                resumedDate = resumedDate?.toString(),
+                gameJson = gameJsonString,
+                syncStatus = syncStatus.name,
+                userId = userId,
+                lastModifiedAt = nowMillis,
+            )
+        }
+
+        is BackloggedGame.Dropped -> {
+            BackloggedGameEntity(
+                gameId = game.id,
+                status = STATUS_DROPPED,
+                backloggedDate = backloggedDate.toString(),
+                startedDate = startedDate.toString(),
+                finishedDate = null,
+                droppedDate = droppedDate?.toString(),
+                resumedDate = null,
                 gameJson = gameJsonString,
                 syncStatus = syncStatus.name,
                 userId = userId,
@@ -80,6 +104,8 @@ fun BackloggedGame.toEntity(
                 backloggedDate = backloggedDate.toString(),
                 startedDate = startedDate.toString(),
                 finishedDate = finishedDate.toString(),
+                droppedDate = droppedDate?.toString(),
+                resumedDate = resumedDate?.toString(),
                 gameJson = gameJsonString,
                 syncStatus = syncStatus.name,
                 userId = userId,
@@ -95,6 +121,9 @@ fun BackloggedGameEntity.toBackloggedGame(json: Json = Json { ignoreUnknownKeys 
         val game = dto.toGame()
         val backloggedDateTime = LocalDateTime.parse(backloggedDate)
 
+        fun parseDate(dateStr: String?): LocalDateTime? =
+            dateStr?.takeIf { it.isNotBlank() && it != "null" }?.let { LocalDateTime.parse(it) }
+
         when (status) {
             STATUS_TO_PLAY -> {
                 BackloggedGame.ToPlay(
@@ -109,7 +138,9 @@ fun BackloggedGameEntity.toBackloggedGame(json: Json = Json { ignoreUnknownKeys 
                     id = gameId.toString(),
                     game = game,
                     backloggedDate = backloggedDateTime,
-                    startedDate = startedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
+                    startedDate = parseDate(startedDate) ?: backloggedDateTime,
+                    droppedDate = parseDate(droppedDate),
+                    resumedDate = parseDate(resumedDate),
                 )
             }
 
@@ -118,8 +149,20 @@ fun BackloggedGameEntity.toBackloggedGame(json: Json = Json { ignoreUnknownKeys 
                     id = gameId.toString(),
                     game = game,
                     backloggedDate = backloggedDateTime,
-                    startedDate = startedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
-                    finishedDate = finishedDate?.let { LocalDateTime.parse(it) } ?: backloggedDateTime,
+                    startedDate = parseDate(startedDate) ?: backloggedDateTime,
+                    finishedDate = parseDate(finishedDate) ?: backloggedDateTime,
+                    droppedDate = parseDate(droppedDate),
+                    resumedDate = parseDate(resumedDate),
+                )
+            }
+
+            STATUS_DROPPED -> {
+                BackloggedGame.Dropped(
+                    id = gameId.toString(),
+                    game = game,
+                    backloggedDate = backloggedDateTime,
+                    startedDate = parseDate(startedDate) ?: backloggedDateTime,
+                    droppedDate = parseDate(droppedDate),
                 )
             }
 
@@ -140,6 +183,8 @@ fun BackloggedGameEntity.toDto(): BackloggedGameDto =
         backloggedDate = backloggedDate,
         startedDate = startedDate,
         finishedDate = finishedDate,
+        droppedDate = droppedDate,
+        resumedDate = resumedDate,
         gameData = gameJson,
         updatedAt = lastModifiedAt,
     )
@@ -151,6 +196,8 @@ fun BackloggedGameDto.toEntity(syncStatus: SyncStatus = SyncStatus.SYNCED): Back
         backloggedDate = backloggedDate,
         startedDate = startedDate,
         finishedDate = finishedDate,
+        droppedDate = droppedDate,
+        resumedDate = resumedDate,
         gameJson = gameData ?: "",
         syncStatus = syncStatus.name,
         userId = userId,

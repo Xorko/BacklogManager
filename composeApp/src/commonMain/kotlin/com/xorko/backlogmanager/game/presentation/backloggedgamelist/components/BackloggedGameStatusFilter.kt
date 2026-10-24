@@ -1,18 +1,28 @@
 package com.xorko.backlogmanager.game.presentation.backloggedgamelist.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Dropped
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Playing
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
@@ -25,6 +35,7 @@ private val statuses =
         ToPlay::class,
         Playing::class,
         Finished::class,
+        Dropped::class,
     )
 
 @Composable
@@ -34,29 +45,40 @@ fun BackloggedGameStatusFilter(
     counts: Map<KClass<out BackloggedGame>, Int>,
     modifier: Modifier = Modifier,
 ) {
-    SingleChoiceSegmentedButtonRow(
+    LazyRow(
         modifier = modifier,
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        statuses.forEachIndexed { index, status ->
-            SegmentedButton(
+        items(statuses) { status ->
+            val count = if (status == null) counts.values.sum() else counts[status] ?: 0
+
+            FilterChip(
                 selected = selectedStatus == status,
                 onClick = { onStatusSelected(status) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = statuses.size),
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    val count = when (status) {
-                        null -> counts.values.sum()
-                        else -> counts[status] ?: 0
+                label = {
+                    Column(
+                        modifier = Modifier.padding(vertical = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(text = status.getStatus().asString())
+                        Text(
+                            text = "($count)",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = LocalContentColor.current.copy(alpha = 0.7f),
+                        )
                     }
-
-                    Text(text = status.getStatus().asString())
-                    Text(
-                        text = "($count)",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = LocalContentColor.current.copy(alpha = 0.7f),
-                    )
-                }
-            }
+                },
+                leadingIcon = {
+                    if (selectedStatus == status) {
+                        Icon(
+                            Icons.Outlined.Check,
+                            contentDescription = null,
+                            modifier = Modifier.size(FilterChipDefaults.IconSize),
+                        )
+                    }
+                },
+            )
         }
     }
 }
@@ -68,11 +90,12 @@ private fun Preview() {
         BackloggedGameStatusFilter(
             selectedStatus = Playing::class,
             onStatusSelected = {},
-            counts = mapOf(
-                ToPlay::class to 1,
-                Playing::class to 2,
-                Finished::class to 3,
-            ),
+            counts =
+                mapOf(
+                    ToPlay::class to 1,
+                    Playing::class to 2,
+                    Finished::class to 3,
+                ),
         )
     }
 }

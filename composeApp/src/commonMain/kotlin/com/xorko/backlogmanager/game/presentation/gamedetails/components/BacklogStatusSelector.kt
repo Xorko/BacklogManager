@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
+import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Dropped
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Finished
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.Playing
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame.ToPlay
@@ -29,10 +30,16 @@ fun BacklogStatusSelector(
         modifier = modifier.fillMaxWidth(),
     ) {
         statuses.forEachIndexed { index, status ->
+            val isEnabled = when (selectedStatus) {
+                Dropped::class -> status == Playing::class
+                else -> true
+            }
+
             SegmentedButton(
                 selected = selectedStatus == status,
                 onClick = { onStatusSelected(status) },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = statuses.size),
+                enabled = isEnabled,
             ) {
                 Text(text = status.getStatus().asString())
             }
@@ -46,6 +53,17 @@ private fun Preview() {
     BacklogManagerTheme {
         BacklogStatusSelector(
             selectedStatus = ToPlay::class,
+            onStatusSelected = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DisabledPreview() {
+    BacklogManagerTheme {
+        BacklogStatusSelector(
+            selectedStatus = Dropped::class,
             onStatusSelected = {},
         )
     }

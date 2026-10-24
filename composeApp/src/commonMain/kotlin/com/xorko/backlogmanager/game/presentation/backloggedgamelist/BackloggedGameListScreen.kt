@@ -144,10 +144,7 @@ fun BackloggedGameListScreen(
                 selectedStatus = state.selectedFilter,
                 onStatusSelected = { onAction(BackloggedGameListActions.OnFilterSelected(it)) },
                 counts = state.statusCounts,
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Dimens.paddingMedium),
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(Dimens.spacingMedium))
             Surface(

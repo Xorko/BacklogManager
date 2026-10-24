@@ -65,6 +65,8 @@ class GameDetailsViewModel(
             is GameDetailsActions.OnAddToBacklog -> addToBacklog()
             is GameDetailsActions.OnRemoveFromBacklog -> removeFromBacklog()
             is GameDetailsActions.OnStatusSelected -> updateBacklogStatus(status = action.status)
+            is GameDetailsActions.OnDrop -> updateBacklogStatus(status = BackloggedGame.Dropped::class)
+            is GameDetailsActions.OnResume -> updateBacklogStatus(status = BackloggedGame.Playing::class)
             else -> Logger.d("Unhandled action")
         }
 

@@ -12,6 +12,8 @@ data class BackloggedGameDto(
     @SerialName("backlogged_date") val backloggedDate: String,
     @SerialName("started_date") val startedDate: String? = null,
     @SerialName("finished_date") val finishedDate: String? = null,
+    @SerialName("dropped_date") val droppedDate: String? = null,
+    @SerialName("resumed_date") val resumedDate: String? = null,
     @SerialName("game_data") val gameData: String? = null,
     @SerialName("updated_at") val updatedAt: Long? = null,
 )

@@ -15,6 +15,11 @@ sealed interface BackloggedGame {
         val startedDate: LocalDateTime
     }
 
+    sealed interface Droppable : BackloggedGame {
+        val droppedDate: LocalDateTime?
+        val resumedDate: LocalDateTime?
+    }
+
     data class ToPlay(
         override val id: String,
         override val game: Game,
@@ -26,22 +31,68 @@ sealed interface BackloggedGame {
         override val game: Game,
         override val backloggedDate: LocalDateTime,
         override val startedDate: LocalDateTime,
-    ) : Started
+        override val droppedDate: LocalDateTime?,
+        override val resumedDate: LocalDateTime?,
+    ) : Started,
+        Droppable
 
     data class Finished(
         override val id: String,
         override val game: Game,
         override val backloggedDate: LocalDateTime,
         override val startedDate: LocalDateTime,
+        override val droppedDate: LocalDateTime?,
+        override val resumedDate: LocalDateTime?,
         val finishedDate: LocalDateTime,
+    ) : Started,
+        Droppable
+
+    data class Dropped(
+        override val id: String,
+        override val game: Game,
+        override val backloggedDate: LocalDateTime,
+        override val startedDate: LocalDateTime,
+        val droppedDate: LocalDateTime?,
     ) : Started
 }
 
-fun BackloggedGame.withStatus(status: KClass<out BackloggedGame>) =
+fun BackloggedGame.withStatus(status: KClass<out BackloggedGame>): BackloggedGame =
     when (this) {
-        is BackloggedGame.Finished -> withStatus(status)
-        is BackloggedGame.Playing -> withStatus(status)
-        is BackloggedGame.ToPlay -> withStatus(status)
+        is BackloggedGame.Finished -> {
+            withStatus(status)
+        }
+
+        is BackloggedGame.Playing -> {
+            withStatus(status)
+        }
+
+        is BackloggedGame.ToPlay -> {
+            withStatus(status)
+        }
+
+        is BackloggedGame.Dropped -> {
+            when (status) {
+                BackloggedGame.Dropped::class -> {
+                    this
+                }
+
+                BackloggedGame.Playing::class -> {
+                    resume()
+                }
+
+                BackloggedGame.ToPlay::class -> {
+                    BackloggedGame.ToPlay(
+                        id = id,
+                        game = game,
+                        backloggedDate = backloggedDate,
+                    )
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Invalid status")
+                }
+            }
+        }
     }
 
 fun BackloggedGame.ToPlay.withStatus(status: KClass<out BackloggedGame>): BackloggedGame {
@@ -58,6 +109,8 @@ fun BackloggedGame.ToPlay.withStatus(status: KClass<out BackloggedGame>): Backlo
                 game = game,
                 backloggedDate = backloggedDate,
                 startedDate = now,
+                droppedDate = null,
+                resumedDate = null,
             )
         }
 
@@ -68,6 +121,18 @@ fun BackloggedGame.ToPlay.withStatus(status: KClass<out BackloggedGame>): Backlo
                 backloggedDate = backloggedDate,
                 startedDate = now,
                 finishedDate = now,
+                droppedDate = null,
+                resumedDate = null,
+            )
+        }
+
+        BackloggedGame.Dropped::class -> {
+            BackloggedGame.Dropped(
+                id = id,
+                game = game,
+                backloggedDate = backloggedDate,
+                startedDate = now,
+                droppedDate = now,
             )
         }
 
@@ -100,6 +165,18 @@ fun BackloggedGame.Playing.withStatus(status: KClass<out BackloggedGame>): Backl
                 backloggedDate = backloggedDate,
                 startedDate = startedDate,
                 finishedDate = now,
+                droppedDate = droppedDate,
+                resumedDate = resumedDate,
+            )
+        }
+
+        BackloggedGame.Dropped::class -> {
+            BackloggedGame.Dropped(
+                id = id,
+                game = game,
+                backloggedDate = backloggedDate,
+                startedDate = startedDate,
+                droppedDate = now,
             )
         }
 
@@ -109,7 +186,7 @@ fun BackloggedGame.Playing.withStatus(status: KClass<out BackloggedGame>): Backl
     }
 }
 
-fun BackloggedGame.Finished.withStatus(status: KClass<out BackloggedGame>) =
+fun BackloggedGame.Finished.withStatus(status: KClass<out BackloggedGame>): BackloggedGame =
     when (status) {
         BackloggedGame.ToPlay::class -> {
             BackloggedGame.ToPlay(
@@ -125,6 +202,8 @@ fun BackloggedGame.Finished.withStatus(status: KClass<out BackloggedGame>) =
                 game = game,
                 backloggedDate = backloggedDate,
                 startedDate = startedDate,
+                droppedDate = droppedDate,
+                resumedDate = resumedDate,
             )
         }
 
@@ -136,3 +215,16 @@ fun BackloggedGame.Finished.withStatus(status: KClass<out BackloggedGame>) =
             throw IllegalArgumentException("Invalid status")
         }
     }
+
+fun BackloggedGame.Dropped.resume(): BackloggedGame.Playing {
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+    return BackloggedGame.Playing(
+        id = id,
+        game = game,
+        backloggedDate = backloggedDate,
+        startedDate = startedDate,
+        droppedDate = droppedDate,
+        resumedDate = now,
+    )
+}

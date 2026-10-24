@@ -40,6 +40,7 @@ import backlogmanager.composeapp.generated.resources.game_details_screen_title
 import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
 import com.xorko.backlogmanager.game.domain.models.Game
+import com.xorko.backlogmanager.game.presentation.gamedetails.components.BackloggedGameTopAppBarActions
 import com.xorko.backlogmanager.game.presentation.gamedetails.components.GameDetailsCarousel
 import com.xorko.backlogmanager.game.presentation.gamedetails.components.GameDetailsSheet
 import org.jetbrains.compose.resources.stringResource
@@ -87,6 +88,17 @@ private fun GameDetailScreen(
                     }
                 },
                 scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                actions = {
+                    if (state.backloggedGame != null) {
+                        BackloggedGameTopAppBarActions(
+                            isPlaying = state.backloggedGame is BackloggedGame.Playing,
+                            isDropped = state.backloggedGame is BackloggedGame.Dropped,
+                            onDropGame = { onAction(GameDetailsActions.OnDrop) },
+                            onResumeGame = { onAction(GameDetailsActions.OnResume) },
+                            onRemoveFromBacklog = { onAction(GameDetailsActions.OnRemoveFromBacklog) },
+                        )
+                    }
+                },
             )
         },
     ) {
@@ -181,7 +193,8 @@ private fun GameDetails(
             GameDetailsSheet(
                 game = game,
                 backloggedGame = backloggedGame,
-                onAction = onAction,
+                onStatusSelected = { onAction(GameDetailsActions.OnStatusSelected(it)) },
+                onAddToBacklogPressed = { onAction(GameDetailsActions.OnAddToBacklog) },
                 modifier =
                     Modifier
                         .fillMaxHeight()

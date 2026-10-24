@@ -192,6 +192,7 @@ private fun BackloggedGame.getChipColor(): Color =
         is BackloggedGame.ToPlay -> PrimaryLight
         is BackloggedGame.Playing -> MaterialTheme.colorScheme.primary
         is BackloggedGame.Finished -> Success
+        is BackloggedGame.Dropped -> MaterialTheme.colorScheme.error
     }
 
 @Composable
@@ -234,6 +235,8 @@ private fun BackloggedGameListItemPreview() {
                     game = generateGame(1),
                     backloggedDate = backloggedDate,
                     startedDate = startedDate,
+                    droppedDate = null,
+                    resumedDate = null,
                     finishedDate = finishedDate,
                 ),
             onClick = {},

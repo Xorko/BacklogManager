@@ -10,6 +10,10 @@ interface GameDetailsActions {
 
     data object OnRemoveFromBacklog : GameDetailsActions
 
+    data object OnDrop : GameDetailsActions
+
+    data object OnResume : GameDetailsActions
+
     data class OnStatusSelected(
         val status: KClass<out BackloggedGame>,
     ) : GameDetailsActions
