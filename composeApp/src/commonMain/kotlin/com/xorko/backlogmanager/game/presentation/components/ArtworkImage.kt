@@ -44,7 +44,6 @@ fun ArtworkImage(
     Box(
         modifier =
             Modifier
-                .width(80.dp)
                 .aspectRatio(ratio = 0.65f, matchHeightConstraintsFirst = true)
                 .clip(BacklogManagerShapes.small),
     ) {

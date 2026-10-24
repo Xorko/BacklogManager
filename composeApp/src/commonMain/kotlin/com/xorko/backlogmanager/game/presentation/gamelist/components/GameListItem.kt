@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,9 +18,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.xorko.backlogmanager.core.presentation.generateGame
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerShapes
 import com.xorko.backlogmanager.core.presentation.theme.BacklogManagerTheme
@@ -28,6 +32,8 @@ import com.xorko.backlogmanager.game.domain.models.Game
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
 import com.xorko.backlogmanager.game.presentation.components.Companies
 import com.xorko.backlogmanager.game.presentation.components.GameTitle
+import com.xorko.backlogmanager.game.presentation.components.PlatformTags
+import com.xorko.backlogmanager.game.presentation.components.toPlatformUi
 import com.xorko.backlogmanager.utils.toLongDateFormat
 
 @Composable
@@ -50,8 +56,7 @@ fun GameListItem(
             modifier =
                 Modifier
                     .padding(Dimens.paddingMedium)
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
+                    .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -74,12 +79,24 @@ private fun GameInfoWithArtwork(
     game: Game,
     modifier: Modifier = Modifier,
 ) {
+    // Grow with the system font size so the text never gets clipped
+    val fontScale = LocalDensity.current.fontScale.coerceIn(1f, 1.5f)
+
     Row(
-        modifier = modifier,
+        modifier = modifier.height(128.dp * fontScale),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
     ) {
-        ArtworkImage(game = game)
-        GameInfo(game = game)
+        ArtworkImage(
+            game = game,
+            modifier = Modifier.fillMaxHeight(),
+        )
+        GameInfo(
+            game = game,
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+        )
     }
 }
 
@@ -98,6 +115,13 @@ private fun GameInfo(
             GameTitle(game = game)
             Companies(companies = game.developers, modifier = Modifier)
             Companies(companies = game.publishers, modifier = Modifier)
+            PlatformTags(
+                platforms = remember(game.platforms) { game.platforms.toPlatformUi() },
+                collapsedCount = 3,
+                maxLines = 1,
+                expandable = false,
+                horizontalAlignment = Alignment.Start,
+            )
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,9 +27,11 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,10 +44,11 @@ import com.xorko.backlogmanager.core.presentation.theme.Dimens
 import com.xorko.backlogmanager.core.presentation.theme.PrimaryLight
 import com.xorko.backlogmanager.core.presentation.theme.Success
 import com.xorko.backlogmanager.game.domain.models.BackloggedGame
-import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getLongStatus
 import com.xorko.backlogmanager.game.presentation.backloggedgamelist.getStatus
 import com.xorko.backlogmanager.game.presentation.components.ArtworkImage
 import com.xorko.backlogmanager.game.presentation.components.Companies
+import com.xorko.backlogmanager.game.presentation.components.PlatformTags
+import com.xorko.backlogmanager.game.presentation.components.toPlatformUi
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
@@ -121,12 +125,24 @@ private fun GameInfoWithArtwork(
     backloggedGame: BackloggedGame,
     modifier: Modifier = Modifier,
 ) {
+    // Grow with the system font size so the text never gets clipped
+    val fontScale = LocalDensity.current.fontScale.coerceIn(1f, 1.5f)
+
     Row(
-        modifier = modifier,
+        modifier = modifier.height(128.dp * fontScale),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
     ) {
-        ArtworkImage(game = backloggedGame.game)
-        GameInfo(backloggedGame = backloggedGame)
+        ArtworkImage(
+            game = backloggedGame.game,
+            modifier = Modifier.fillMaxHeight(),
+        )
+        GameInfo(
+            backloggedGame = backloggedGame,
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+        )
     }
 }
 
@@ -136,37 +152,37 @@ private fun GameInfo(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier.fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(Dimens.paddingSmall),
     ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(Dimens.spacingSmall),
-        ) {
-            Text(
-                text = backloggedGame.game.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Companies(companies = backloggedGame.game.developers, modifier = Modifier)
-            Companies(companies = backloggedGame.game.publishers, modifier = Modifier)
-            StatusChip(
-                status = backloggedGame.getStatus().asString(),
-                backgroundColor = backloggedGame.getChipColor(),
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = backloggedGame.getLongStatus().asString(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            text = backloggedGame.game.name,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Companies(companies = backloggedGame.game.developers, modifier = Modifier)
+        PlatformTags(
+            platforms =
+                remember(backloggedGame.game.platforms) {
+                    backloggedGame.game.platforms.toPlatformUi()
+                },
+            collapsedCount = 3,
+            maxLines = 1,
+            expandable = false,
+            horizontalAlignment = Alignment.Start,
+        )
+        Spacer(Modifier.weight(1f))
+        StatusTag(
+            status = backloggedGame.getStatus().asString(),
+            backgroundColor = backloggedGame.getChipColor(),
         )
     }
 }
 
 @Composable
-fun StatusChip(
+fun StatusTag(
     status: String,
     backgroundColor: Color,
     contentColor: Color = Color.White,
@@ -175,7 +191,7 @@ fun StatusChip(
     Surface(
         color = backgroundColor,
         contentColor = contentColor,
-        shape = BacklogManagerShapes.medium,
+        shape = BacklogManagerShapes.small,
         modifier = modifier,
     ) {
         Text(
