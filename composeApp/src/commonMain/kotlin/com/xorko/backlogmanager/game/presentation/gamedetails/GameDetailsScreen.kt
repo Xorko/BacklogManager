@@ -112,15 +112,18 @@ private fun GameDetailScreen(
             if (state.isLoading) {
                 CircularProgressIndicator()
             } else {
+                val displayedGame = state.game ?: state.backloggedGame?.game
+                println("displayedGame=$displayedGame")
+
                 when {
-                    state.errorMessage != null -> {
+                    state.errorMessage != null && displayedGame == null -> {
                         Text(
                             text = state.errorMessage.asString(),
                             color = MaterialTheme.colorScheme.onBackground,
                         )
                     }
 
-                    state.game == null -> {
+                    displayedGame == null -> {
                         Text(
                             text = stringResource(Res.string.error_game_not_found),
                             color = MaterialTheme.colorScheme.onBackground,
@@ -129,7 +132,7 @@ private fun GameDetailScreen(
 
                     else -> {
                         GameDetails(
-                            game = state.game,
+                            game = displayedGame,
                             backloggedGame = state.backloggedGame,
                             onAction = onAction,
                         )
