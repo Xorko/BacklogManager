@@ -8,7 +8,13 @@ actual val apiConfig: ApiConfig = AndroidApiConfig
 
 object AndroidApiConfig : ApiConfig {
     override val baseUrl: String =
-        "${BuildKonfig.API_BASE_URL}:$SERVER_PORT".also {
-            Logger.i("API base URL: $it", tag = this::class.simpleName)
+        run {
+            require(BuildKonfig.API_BASE_URL.isNotBlank()) {
+                "API_BASE_URL must be set in local.properties"
+            }
+
+            "${BuildKonfig.API_BASE_URL}:$SERVER_PORT".also {
+                Logger.i("API base URL: $it", tag = this::class.simpleName)
+            }
         }
 }

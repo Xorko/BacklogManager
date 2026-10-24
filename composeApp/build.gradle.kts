@@ -174,19 +174,28 @@ buildkonfig {
             STRING,
             apiBaseUrlKey,
             localProperties[localPropertiesApiBaseUrl] as? String
-                ?: error("Missing $localPropertiesApiBaseUrl in local.properties"),
+                ?: run {
+                    logger.warn("Missing $localPropertiesApiBaseUrl in local.properties")
+                    ""
+                },
         )
         buildConfigField(
             STRING,
             supabaseUrlKey,
             localProperties[localPropertiesSupabaseUrlKey] as? String
-                ?: error("Missing $localPropertiesSupabaseUrlKey in local.properties"),
+                ?: run {
+                    logger.warn(("Missing $localPropertiesSupabaseUrlKey in local.properties"))
+                    ""
+                },
         )
         buildConfigField(
             STRING,
             supabaseKeyKey,
             localProperties[localPropertiesSupabaseKeyKey] as? String
-                ?: error("Missing $localPropertiesSupabaseUrlKey in local.properties"),
+                ?: run {
+                    logger.warn("Missing $localPropertiesSupabaseUrlKey in local.properties")
+                    ""
+                },
         )
     }
 
