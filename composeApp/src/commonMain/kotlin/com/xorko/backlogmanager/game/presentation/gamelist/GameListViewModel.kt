@@ -60,7 +60,7 @@ class GameListViewModel(
                 handleOnListEndAlmostReached()
             }
 
-            GameListActions.OnRefresh -> {
+            is GameListActions.OnRefresh, is GameListActions.OnRetry -> {
                 refreshGames()
             }
         }

@@ -8,13 +8,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.no_search_results
+import backlogmanager.composeapp.generated.resources.retry
 import backlogmanager.composeapp.generated.resources.search_hint
 import com.xorko.backlogmanager.core.presentation.components.GameSearchBar
 import com.xorko.backlogmanager.core.presentation.components.ScrollToTopFab
@@ -162,13 +171,29 @@ fun GameListScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     contentAlignment = Alignment.Center,
                                 ) {
-                                    ErrorMessage(
-                                        message = state.errorMessage.asString(),
-                                        modifier =
-                                            Modifier.padding(
-                                                Dimens.paddingMedium,
-                                            ),
-                                    )
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                    ) {
+                                        ErrorMessage(
+                                            message = state.errorMessage.asString(),
+                                            modifier =
+                                                Modifier.padding(
+                                                    Dimens.paddingMedium,
+                                                ),
+                                        )
+                                        Button(
+                                            onClick = { onAction(GameListActions.OnRetry) },
+                                            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Rounded.Refresh,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(ButtonDefaults.IconSize),
+                                            )
+                                            Spacer(Modifier.width(ButtonDefaults.IconSpacing))
+                                            Text(stringResource(Res.string.retry))
+                                        }
+                                    }
                                 }
                             }
 
@@ -211,11 +236,12 @@ fun GameListScreen(
 private fun Preview() {
     BacklogManagerTheme {
         GameListScreen(
-            state = GameListState(
-                searchResults = (0..10).map { generateGame(it) },
-                searchQuery = "Game",
-                isLoading = false,
-            ),
+            state =
+                GameListState(
+                    searchResults = (0..10).map { generateGame(it) },
+                    searchQuery = "Game",
+                    isLoading = false,
+                ),
             onAction = {},
         )
     }
@@ -226,9 +252,10 @@ private fun Preview() {
 private fun LoadingPreview() {
     BacklogManagerTheme {
         GameListScreen(
-            state = GameListState(
-                searchResults = emptyList(),
-            ),
+            state =
+                GameListState(
+                    searchResults = emptyList(),
+                ),
             onAction = {},
         )
     }

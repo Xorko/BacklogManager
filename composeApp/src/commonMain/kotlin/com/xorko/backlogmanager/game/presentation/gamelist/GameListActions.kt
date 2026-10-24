@@ -14,4 +14,6 @@ sealed interface GameListActions {
     data object OnListEndAlmostReached : GameListActions
 
     data object OnRefresh : GameListActions
+
+    data object OnRetry : GameListActions
 }
