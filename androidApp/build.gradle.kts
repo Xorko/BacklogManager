@@ -1,12 +1,9 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.regex.Pattern
-
 // region Environment
 val flavorDimension = "env"
 val dev = "dev"
 val staging = "staging"
-val prod = "prod"
-val environments = setOf(dev, staging, prod)
+val production = "production"
+val environments = setOf(dev, staging, production)
 // endregion
 
 plugins {
@@ -69,7 +66,7 @@ android {
             applicationIdSuffix = ".$staging"
             resValue("string", "app_name", "[$staging] BacklogManager")
         }
-        create(prod) {
+        create(production) {
             dimension = flavorDimension
         }
     }

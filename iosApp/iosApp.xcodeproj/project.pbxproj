@@ -336,7 +336,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VARIANT = prod;
+				VARIANT = production;
 			};
 			name = "Production Debug";
 		};
@@ -366,7 +366,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VARIANT = prod;
+				VARIANT = production;
 			};
 			name = "Production Release";
 		};

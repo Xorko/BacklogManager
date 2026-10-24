@@ -9,8 +9,8 @@ import java.util.regex.Pattern
 val flavorDimension = "env"
 val dev = "dev"
 val staging = "staging"
-val prod = "prod"
-val environments = setOf(dev, staging, prod)
+val production = "production"
+val environments = setOf(dev, staging, production)
 // endregion
 
 // region Build config keys
@@ -209,8 +209,8 @@ buildkonfig {
         buildConfigField(STRING, flavorDimension, staging)
     }
 
-    defaultConfigs(prod) {
-        buildConfigField(STRING, flavorDimension, prod)
+    defaultConfigs(production) {
+        buildConfigField(STRING, flavorDimension, production)
     }
 }
 
