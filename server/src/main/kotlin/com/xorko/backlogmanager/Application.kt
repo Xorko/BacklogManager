@@ -14,13 +14,14 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.ratelimit.RateLimit
+import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
-import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.serialization.json.Json
 import org.koin.ktor.plugin.Koin
+import kotlin.time.Duration.Companion.seconds
 
 fun main() {
     embeddedServer(Netty, port = SERVER_PORT, host = "0.0.0.0", module = Application::main)
@@ -41,7 +42,24 @@ fun Application.main() {
         )
     }
 
+    install(RateLimit) {
+        register {
+            rateLimiter(limit = 100, refillPeriod = 60.seconds)
+        }
+    }
+
     install(StatusPages) {
+        status(HttpStatusCode.TooManyRequests) { call, status ->
+            call.respond(
+                status = status,
+                message =
+                    ApiError(
+                        error = status.description,
+                        code = status.value,
+                    ),
+            )
+        }
+
         exception<ModuleException> { call, cause ->
             call.respond(
                 status = cause.statusCode,
@@ -88,10 +106,9 @@ fun Application.main() {
     }
 
     routing {
-        get("/") {
-            call.respondText("Server is up and running!")
+        rateLimit {
+            gameRoutes()
+            igdbProxyRoute()
         }
-        gameRoutes()
-        igdbProxyRoute()
     }
 }
