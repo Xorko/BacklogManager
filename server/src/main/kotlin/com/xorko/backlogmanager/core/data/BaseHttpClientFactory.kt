@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
 
 private val baseHttpClientConfig: HttpClientConfig<CIOEngineConfig>.() -> Unit = {
     install(Logging) {
-        level = LogLevel.ALL
+        level = LogLevel.INFO
     }
     install(ContentNegotiation) {
         json(
