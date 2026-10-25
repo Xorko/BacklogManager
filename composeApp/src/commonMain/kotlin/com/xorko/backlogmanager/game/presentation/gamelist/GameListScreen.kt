@@ -103,11 +103,13 @@ fun GameListScreen(
             .collect { isFabVisible = it > 0 }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(gameListState) {
         snapshotFlow { gameListState.shouldLoadMoreItems() }
             .distinctUntilChanged()
-            .collect { _ ->
-                onAction(GameListActions.OnListEndAlmostReached)
+            .collect { shouldLoadMore ->
+                if (shouldLoadMore) {
+                    onAction(GameListActions.OnListEndAlmostReached)
+                }
             }
     }
 
