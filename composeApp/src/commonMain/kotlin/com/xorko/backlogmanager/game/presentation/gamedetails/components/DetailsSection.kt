@@ -18,6 +18,7 @@ import backlogmanager.composeapp.generated.resources.Res
 import backlogmanager.composeapp.generated.resources.critics_rating
 import backlogmanager.composeapp.generated.resources.developers
 import backlogmanager.composeapp.generated.resources.publishers
+import backlogmanager.composeapp.generated.resources.release_date
 import backlogmanager.composeapp.generated.resources.reviews
 import backlogmanager.composeapp.generated.resources.users_rating
 import com.xorko.backlogmanager.core.presentation.generateGame
@@ -81,7 +82,7 @@ fun GameDetailsSection(
         game.initialReleaseDate?.let {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             DetailRow(
-                label = "Release date",
+                label = stringResource(Res.string.release_date),
                 value = it.toLongDateFormat(),
             )
         }
