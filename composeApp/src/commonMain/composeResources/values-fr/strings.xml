@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <string name="error_unknown">Une erreur s’est produite, mais nous ne savons pas laquelle</string>
+    <string name="error_request_timeout">La requête a expiré</string>
+    <string name="error_no_internet">Il semble que vous ne soyez pas connecté à Internet</string>
+    <string name="error_disk_full">Il semble que votre espace de stockage soit plein</string>
+    <string name="error_too_many_request">Il semble que vous ayez dépassé votre quota</string>
+    <string name="error_serialization">Impossible d’analyser les données</string>
+    <string name="error_game_not_found">Impossible de récupérer les données de ce jeu</string>
+    <string name="search_hint">Rechercher…</string>
+    <string name="backlog_search_hint">Rechercher dans votre backlog…</string>
+    <string name="clear_search">Effacer la recherche</string>
+    <string name="go_back">Retour</string>
+    <string name="scroll_to_top">Revenir en haut</string>
+    <string name="navigation_games">Jeux</string>
+    <string name="navigation_backlog">Backlog</string>
+    <string name="no_search_results">Pas de chance cette fois. Essayez peut-être un autre titre ?</string>
+    <string name="empty_backlog">Votre backlog est vide. Ajoutons quelques jeux !</string>
+    <string name="no_filter_result_to_play">Rien dans votre backlog ? Arrangeons ça</string>
+    <string name="no_filter_result_now_playing">Tout un backlog vous attend. Choisissez un jeu et lancez-vous !</string>
+    <string name="no_filter_result_finished">Rien de terminé… pour l’instant. Pourquoi ne pas en choisir un et le finir ?</string>
+    <string name="backlogged_game_status_to_play">À jouer</string>
+    <string name="backlogged_game_status_playing">En cours</string>
+    <string name="backlogged_game_status_finished">Terminé</string>
+    <string name="backlogged_game_status_dropped">Abandonné</string>
+    <string name="backlogged_game_status_all">Tous</string>
+    <string name="backlogged_game_added_on">Ajouté le</string>
+    <string name="backlogged_game_started_on">Commencé le</string>
+    <string name="backlogged_game_finished_on">Terminé le</string>
+    <string name="backlogged_game_dropped_on">Abandonné le</string>
+    <string name="backlogged_game_resumed_on">Repris le</string>
+    <string name="game_cover_artwork_description">Illustration de %1$s</string>
+    <string name="game_details_screen_title">Détails du jeu</string>
+    <string name="add_to_backlog">Ajouter au backlog</string>
+    <string name="remove_from_backlog">Retirer du backlog</string>
+    <string name="backlogged_game_drop">Abandonner</string>
+    <string name="backlogged_game_resume">Reprendre</string>
+    <string name="more_actions">Plus d’actions</string>
+    <string name="less">Moins</string>
+    <string name="retry">Réessayer</string>
+    <string name="release_date">Date de sortie</string>
+    <string name="critics_rating">Note de la presse</string>
+    <string name="users_rating">Note des joueurs</string>
+
+    <plurals name="publishers">
+        <item quantity="one">Éditeur</item>
+        <item quantity="other">Éditeurs</item>
+    </plurals>
+    <plurals name="developers">
+        <item quantity="one">Développeur</item>
+        <item quantity="other">Développeurs</item>
+    </plurals>
+    <plurals name="reviews">
+        <item quantity="one">Avis</item>
+        <item quantity="other">Avis</item>
+    </plurals>
+</resources>
