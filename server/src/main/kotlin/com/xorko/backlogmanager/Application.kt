@@ -6,13 +6,17 @@ import com.xorko.backlogmanager.core.domain.exceptions.ModuleException
 import com.xorko.backlogmanager.di.appModules
 import com.xorko.backlogmanager.modules.game.gameRoutes
 import com.xorko.backlogmanager.modules.igdb.proxy.igdbProxyRoute
+import io.ktor.http.CacheControl
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.CachingOptions
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.cachingheaders.CachingHeaders
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.plugins.ratelimit.rateLimit
@@ -102,6 +106,21 @@ fun Application.main() {
                         code = HttpStatusCode.InternalServerError.value,
                     ),
             )
+        }
+    }
+
+    install(CachingHeaders) {
+        options { call, _ ->
+            if (call.response.status()?.isSuccess() ?: true) {
+                CachingOptions(
+                    CacheControl.MaxAge(
+                        maxAgeSeconds = 3600,
+                        visibility = CacheControl.Visibility.Public,
+                    ),
+                )
+            } else {
+                null
+            }
         }
     }
 
