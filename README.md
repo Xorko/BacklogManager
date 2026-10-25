@@ -1,19 +1,16 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Server.
+# Backlog Manager
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+Backlog Manager is an offline-first video game backlog management app.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Features
 
-* `/server` is for the Ktor server application.
+- You can browse through games to find your next game
+- You can read details about a game
+- You can add a game to your backlog and track it
 
-* `/shared` is for the code that will be shared between all targets in the project.
-  The most important subfolder is `commonMain`. If preferred, you can add code to the platform-specific folders here too.
+## Screenshots
 
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+<img height="400" alt="Game list" src="https://github.com/user-attachments/assets/6f508642-db4e-4cbc-9119-48f0603e291f" />
+<img height="400" alt="Game details" src="https://github.com/user-attachments/assets/d5a379a6-ec67-4a77-b319-7981f80bd650" />
+<img height="400" alt="Game details with actions menu expanded" src="https://github.com/user-attachments/assets/08ee7267-5b91-4932-a359-c65cd40e5e5a" />
+<img height="400" alt="Backlog" src="https://github.com/user-attachments/assets/1dc93f18-cde2-4d9d-8657-77fdc44bfe30" />
