@@ -2,6 +2,7 @@ package com.xorko.backlogmanager.game.presentation.gamelist.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -32,6 +33,7 @@ fun GameList(
     LazyColumn(
         modifier = modifier,
         state = scrollState,
+        contentPadding = PaddingValues(bottom = Dimens.paddingMedium),
         verticalArrangement = Arrangement.spacedBy(Dimens.spacingMedium),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
