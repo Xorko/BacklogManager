@@ -113,7 +113,6 @@ private fun GameDetailScreen(
                 CircularProgressIndicator()
             } else {
                 val displayedGame = state.game ?: state.backloggedGame?.game
-                println("displayedGame=$displayedGame")
 
                 when {
                     state.errorMessage != null && displayedGame == null -> {
